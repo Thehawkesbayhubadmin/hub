@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub – Business Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --y:#F5C200;--yl:#FFD940;--bk:#0E0E0E;--dk:#141414;--c1:#1C1C1C;--c2:#242424;
+  --br:#2A2A2A;--tx:#F0F0F0;--mt:#666;--wh:#fff;
+  --gr:#2ECC71;--rd:#E74C3C;--bl:#3498DB;--or:#F39C12;--pu:#9B59B6;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dk);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;}
+button{cursor:pointer;font-family:'DM Sans',sans-serif;}
+input,select,textarea{font-family:'DM Sans',sans-serif;}
+a{text-decoration:none;color:inherit;}
+
+/* ── AUTH SCREEN ── */
+#authScreen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--dk);padding:24px;
+  background-image:radial-gradient(ellipse at 20% 50%,rgba(245,194,0,.06) 0%,transparent 60%),
+                   radial-gradient(ellipse at 80% 20%,rgba(245,194,0,.04) 0%,transparent 50%);
+}
+.auth-card{
+  background:var(--c1);border-radius:28px;padding:48px 40px;
+  max-width:460px;width:100%;border:1px solid var(--br);
+  box-shadow:0 40px 80px rgba(0,0,0,.5);
+}
+.auth-logo{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.auth-logo img{height:52px;width:52px;border-radius:12px;object-fit:cover;}
+.auth-logo-text{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--y);letter-spacing:2px;}
+.auth-logo-sub{font-size:12px;color:var(--mt);font-weight:600;margin-top:2px;}
+.auth-tabs{display:flex;gap:4px;background:var(--c2);border-radius:12px;padding:4px;margin-bottom:28px;}
+.auth-tab{flex:1;padding:10px;border:none;background:transparent;color:var(--mt);font-size:13px;font-weight:700;border-radius:9px;cursor:pointer;transition:all .2s;}
+.auth-tab.on{background:var(--y);color:var(--bk);}
+.auth-form{display:none;}
+.auth-form.on{display:block;}
+.fg{margin-bottom:16px;}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;}
+.fg input{width:100%;background:var(--c2);border:1.5px solid var(--br);border-radius:12px;padding:13px 16px;color:var(--tx);font-size:14px;outline:none;transition:border-color .2s;}
+.fg input:focus{border-color:var(--y);}
+.auth-btn{width:100%;background:var(--y);color:var(--bk);border:none;padding:15px;border-radius:100px;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:4px;}
+.auth-btn:hover{background:var(--yl);transform:translateY(-1px);}
+.auth-err{font-size:12px;color:var(--rd);margin-top:10px;display:none;text-align:center;}
+.auth-back{font-size:13px;color:var(--mt);margin-top:16px;text-align:center;cursor:pointer;}
+.auth-back:hover{color:var(--y);}
+.auth-back a{color:var(--y);}
+
+/* ── DASHBOARD ── */
+#dash{display:none;}
+.layout{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sb{width:240px;background:var(--c1);border-right:1px solid var(--br);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.sb-top{padding:20px 18px 16px;border-bottom:1px solid var(--br);}
+.sb-brand{display:flex;align-items:center;gap:10px;margin-bottom:14px;cursor:pointer;}
+.sb-brand img{height:38px;width:38px;border-radius:9px;object-fit:cover;}
+.sb-brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--y);letter-spacing:2px;}
+.sb-brand-sub{font-size:10px;color:var(--mt);font-weight:600;}
+.biz-pill{background:rgba(245,194,0,.1);border:1px solid rgba(245,194,0,.2);border-radius:100px;padding:5px 12px;display:flex;align-items:center;gap:7px;}
+.biz-av{width:28px;height:28px;background:var(--y);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--bk);flex-shrink:0;}
+.biz-name{font-size:12px;font-weight:700;color:var(--y);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-nav{flex:1;padding:12px 10px;overflow-y:auto;}
+.ni{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:11px;font-size:13px;font-weight:600;color:var(--mt);cursor:pointer;transition:all .2s;margin-bottom:3px;border:none;background:none;width:100%;text-align:left;}
+.ni:hover{background:var(--c2);color:var(--tx);}
+.ni.on{background:rgba(245,194,0,.12);color:var(--y);}
+.ni .nic{font-size:17px;flex-shrink:0;width:22px;text-align:center;}
+.nb{margin-left:auto;background:var(--rd);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:100px;}
+.sb-foot{padding:14px 14px;border-top:1px solid var(--br);}
+.sout{width:100%;padding:9px;border-radius:10px;background:rgba(231,76,60,.08);color:var(--rd);border:1px solid rgba(231,76,60,.15);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.sout:hover{background:var(--rd);color:#fff;}
+
+/* MAIN */
+.main{margin-left:240px;flex:1;padding:30px 36px;min-height:100vh;max-width:calc(100% - 240px);}
+.ph{margin-bottom:26px;}
+.ph h1{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--wh);line-height:1;}
+.ph p{font-size:13px;color:var(--mt);margin-top:4px;}
+
+.panel{display:none;}
+.panel.on{display:block;}
+
+/* STAT CARDS */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:26px;}
+.sc{background:var(--c1);border-radius:16px;padding:20px 18px;border:1px solid var(--br);position:relative;overflow:hidden;}
+.sc::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.06;}
+.sc.yel::after{background:var(--y);}
+.sc.grn::after{background:var(--gr);}
+.sc.blu::after{background:var(--bl);}
+.sc.pur::after{background:var(--pu);}
+.sc.org::after{background:var(--or);}
+.sc-ico{font-size:20px;margin-bottom:10px;}
+.sc-num{font-family:'Bebas Neue',sans-serif;font-size:40px;line-height:1;margin-bottom:3px;}
+.sc.yel .sc-num{color:var(--y);}
+.sc.grn .sc-num{color:var(--gr);}
+.sc.blu .sc-num{color:var(--bl);}
+.sc.pur .sc-num{color:var(--pu);}
+.sc.org .sc-num{color:var(--or);}
+.sc-lbl{font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:1px;}
+.sc-trend{font-size:11px;color:var(--gr);margin-top:5px;font-weight:600;}
+
+/* EVENT CARDS */
+.ev-list{display:flex;flex-direction:column;gap:12px;}
+.ev-card{background:var(--c1);border-radius:16px;padding:18px 20px;border:1px solid var(--br);display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;transition:border-color .2s;}
+.ev-card:hover{border-color:#383838;}
+.ev-card.pending{border-left:3px solid var(--or);}
+.ev-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end;min-width:80px;}
+.ev-btn{padding:7px 14px;border-radius:8px;font-size:11px;font-weight:800;border:none;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.ev-btn-edit{background:rgba(52,152,219,.12);color:#3498db;}
+.ev-btn-edit:hover{background:#3498db;color:#fff;}
+.ev-btn-del{background:rgba(231,76,60,.1);color:#e74c3c;}
+.ev-btn-del:hover{background:#e74c3c;color:#fff;}
+.ev-btn-resub{background:rgba(245,194,0,.12);color:var(--y);}
+.ev-btn-resub:hover{background:var(--y);color:#000;}
+.edit-mode-banner{background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);border-radius:12px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.edit-mode-banner span{font-size:13px;color:#3498db;font-weight:700;}
+.ev-card.approved{border-left:3px solid var(--gr);}
+.ev-card.rejected{border-left:3px solid var(--rd);opacity:.7;}
+.ev-em{font-size:32px;text-align:center;}
+.ev-title{font-size:14px;font-weight:700;color:var(--wh);margin-bottom:4px;}
+.ev-meta{font-size:12px;color:var(--mt);}
+.ev-meta span{margin-right:10px;}
+.ev-badges{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;align-items:center;}
+.pill{padding:4px 11px;border-radius:100px;font-size:11px;font-weight:800;letter-spacing:.3px;white-space:nowrap;}
+.pill-p{background:rgba(243,156,18,.12);color:var(--or);}
+.pill-a{background:rgba(46,204,113,.12);color:var(--gr);}
+.pill-r{background:rgba(231,76,60,.12);color:var(--rd);}
+.pill-cat{background:rgba(255,255,255,.06);color:var(--tx);}
+.ev-stats{text-align:right;}
+.ev-views{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--y);line-height:1;}
+.ev-views-lbl{font-size:10px;color:var(--mt);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+
+/* SUBMIT FORM */
+.form-card{background:var(--c1);border-radius:20px;padding:28px;border:1px solid var(--br);max-width:720px;}
+.form-card h2{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--wh);margin-bottom:22px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.fg2{margin-bottom:16px;}
+.fg2 label{display:block;font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;}
+.fg2 input,.fg2 select,.fg2 textarea{
+  width:100%;background:var(--c2);border:1.5px solid var(--br);border-radius:11px;
+  padding:12px 14px;color:var(--tx);font-size:14px;outline:none;transition:border-color .2s;
+}
+.fg2 input:focus,.fg2 select:focus,.fg2 textarea:focus{border-color:var(--y);}
+.fg2 select option{background:var(--c2);}
+.fg2 textarea{resize:vertical;min-height:90px;}
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.pkg-opt{border:1.5px solid var(--br);border-radius:12px;padding:14px 12px;cursor:pointer;transition:all .2s;text-align:center;}
+.pkg-opt:hover,.pkg-opt.on{border-color:var(--y);background:rgba(245,194,0,.06);}
+.pkg-opt.on .pkg-name{color:var(--y);}
+.pkg-name{font-size:13px;font-weight:800;color:var(--tx);margin-bottom:4px;}
+.pkg-price{font-size:20px;font-weight:800;color:var(--y);font-family:'Bebas Neue';}
+.pkg-desc{font-size:11px;color:var(--mt);margin-top:4px;line-height:1.4;}
+
+.pay-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.pay-modal{background:var(--bg);border:1px solid var(--br);border-radius:20px;padding:32px;max-width:460px;width:100%;position:relative;}
+.pay-modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--mt);font-size:20px;cursor:pointer;}
+.pay-modal h3{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--y);margin:0 0 6px;}
+.pay-modal .pay-sub{color:var(--mt);font-size:13px;margin-bottom:24px;}
+.pay-step{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;}
+.pay-step-num{background:var(--y);color:#000;font-weight:800;font-size:12px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.pay-step-body{flex:1;}
+.pay-step-label{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:4px;}
+.pay-step-val{font-size:13px;color:var(--mt);line-height:1.5;}
+.pay-bank-box{background:var(--c1);border:1px solid var(--br);border-radius:10px;padding:14px 16px;margin-top:6px;}
+.pay-bank-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.pay-bank-row:last-child{margin-bottom:0;}
+.pay-bank-key{font-size:11px;color:var(--mt);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.pay-bank-val{font-size:13px;color:var(--tx);font-weight:700;font-family:monospace;}
+.pay-copy-btn{background:none;border:1px solid var(--br);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--y);cursor:pointer;}
+.pay-amount{font-size:32px;font-weight:800;font-family:'Bebas Neue',sans-serif;color:var(--y);margin:16px 0 4px;}
+.pay-ref-note{font-size:12px;color:var(--mt);margin-bottom:20px;}
+.pay-confirm-btn{width:100%;padding:14px;background:var(--y);color:#000;font-weight:800;font-size:14px;border:none;border-radius:12px;cursor:pointer;}
+.pay-confirm-btn:hover{background:#e6b800;}
+.img-drop{border:2px dashed var(--br);border-radius:14px;padding:28px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:var(--bg);}
+.img-drop:hover{border-color:var(--y);background:rgba(245,194,0,.04);}
+.img-drop-icon{font-size:36px;margin-bottom:8px;}
+.img-drop p{font-size:13px;color:var(--mt);margin:0;}
+.img-drop p strong{color:var(--tx);}
+.pkg-badge{display:inline-block;background:var(--y);color:var(--bk);font-size:9px;font-weight:800;padding:2px 7px;border-radius:100px;margin-top:5px;text-transform:uppercase;}
+.submit-btn{background:var(--y);color:var(--bk);border:none;padding:14px 32px;border-radius:100px;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;}
+.submit-btn:hover{background:var(--yl);transform:translateY(-2px);}
+.repeat-opt{background:var(--c2);border:1.5px solid var(--br);border-radius:100px;padding:7px 16px;font-size:12px;font-weight:700;color:var(--mt);cursor:pointer;transition:all .2s;}
+.repeat-opt:hover,.repeat-opt.on{border-color:var(--y);background:rgba(245,194,0,.1);color:var(--y);}
+@keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.custom-date-tag{background:rgba(245,194,0,.12);border:1px solid rgba(245,194,0,.3);color:var(--y);border-radius:100px;padding:4px 12px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.custom-date-tag button{background:none;border:none;color:var(--y);cursor:pointer;font-size:14px;padding:0;line-height:1;}
+
+/* ANALYTICS */
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.an-card{background:var(--c1);border-radius:16px;padding:22px;border:1px solid var(--br);}
+.an-card h3{font-size:13px;font-weight:800;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.bar-lbl{font-size:12px;color:var(--tx);width:110px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bar-track{flex:1;background:var(--c2);border-radius:100px;height:8px;}
+.bar-fill{height:8px;border-radius:100px;background:var(--y);transition:width .6s ease;}
+.bar-val{font-size:12px;font-weight:700;color:var(--y);width:36px;text-align:right;flex-shrink:0;}
+.tip-card{background:rgba(245,194,0,.06);border:1px solid rgba(245,194,0,.15);border-radius:14px;padding:18px;margin-top:16px;}
+.tip-card h3{font-size:13px;font-weight:800;color:var(--y);margin-bottom:10px;}
+.tip{display:flex;gap:10px;margin-bottom:8px;font-size:13px;color:var(--mt);line-height:1.5;}
+.tip-ico{flex-shrink:0;font-size:15px;}
+
+/* PROFILE */
+.profile-card{background:var(--c1);border-radius:20px;padding:28px;border:1px solid var(--br);max-width:500px;}
+.profile-card h2{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--wh);margin-bottom:20px;}
+.profile-av-big{width:72px;height:72px;background:var(--y);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:var(--bk);margin-bottom:18px;}
+.profile-av-big:hover #profAvOverlay{opacity:1!important;}
+/* SAVE BADGE */
+.save-count-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(245,194,0,.1);border:1px solid rgba(245,194,0,.2);color:var(--y);font-size:11px;font-weight:700;padding:3px 9px;border-radius:100px;margin-left:8px;}
+/* PAST EVENTS TOGGLE */
+.ev-section-label{font-size:11px;font-weight:800;color:var(--mt);text-transform:uppercase;letter-spacing:.6px;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--br);}
+/* BIZ REPLY MODAL */
+.biz-reply-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.biz-reply-modal{background:var(--bg);border:1px solid var(--br);border-radius:20px;padding:28px;max-width:460px;width:100%;}
+.biz-reply-modal h3{font-family:"Bebas Neue",sans-serif;font-size:26px;color:var(--wh);margin:0 0 8px;}
+.biz-reply-modal p{font-size:13px;color:var(--mt);margin-bottom:16px;}
+.biz-reply-modal textarea{width:100%;background:var(--c1);border:1px solid var(--br);border-radius:10px;padding:12px 14px;color:var(--tx);font-size:13px;resize:vertical;min-height:100px;box-sizing:border-box;}
+.biz-reply-modal textarea:focus{outline:none;border-color:var(--y);}
+
+/* EMPTY */
+.empty{text-align:center;padding:52px 20px;color:var(--mt);}
+.empty-ico{font-size:48px;margin-bottom:12px;}
+.ei{font-size:48px;margin-bottom:12px;}
+.empty p{font-size:14px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--y);color:var(--bk);padding:12px 20px;border-radius:12px;font-weight:700;font-size:14px;transform:translateY(60px);opacity:0;transition:all .35s cubic-bezier(.175,.885,.32,1.275);z-index:9999;box-shadow:0 8px 30px rgba(245,194,0,.3);}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* NOTICE */
+.notice{background:rgba(46,204,113,.07);border:1px solid rgba(46,204,113,.18);border-radius:12px;padding:13px 16px;font-size:13px;color:var(--gr);display:flex;align-items:center;gap:9px;margin-bottom:20px;}
+.notice.warn{background:rgba(243,156,18,.07);border-color:rgba(243,156,18,.2);color:var(--or);}
+
+@media(max-width:900px){
+  .sb{width:200px;}.main{margin-left:200px;padding:20px;}
+  .analytics-grid{grid-template-columns:1fr;}
+  .frow{grid-template-columns:1fr;}
+  .pkg-grid{grid-template-columns:1fr;}
+  .sgrid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ── -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img src="data:image/png;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//2Q==" alt="Hub">
+      <div>
+        <div class="auth-logo-text">HUB</div>
+        <div class="auth-logo-sub">Business Portal</div>
+      </div>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab on" onclick="switchTab('login',this)">Sign In</button>
+      <button class="auth-tab" onclick="switchTab('register',this)">Register</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="auth-form on" id="af-login">
+      <div class="fg"><label>Business Email</label><input type="email" id="lEmail" placeholder="you@business.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fg"><label>Password</label><input type="password" id="lPass" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="auth-btn" onclick="doLogin()">Sign In to Business Portal</button>
+      <div class="auth-err" id="lErr">Incorrect email or password. Make sure you have a business account.</div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-form" id="af-register">
+      <div class="fg"><label>Business Name</label><input type="text" id="rName" placeholder="e.g. Napier Wine Co."></div>
+      <div class="fg"><label>Business Email</label><input type="email" id="rEmail" placeholder="you@business.com"></div>
+      <div class="fg"><label>Password</label><input type="password" id="rPass" placeholder="Min. 8 chars, 1 capital, 1 number, 1 special"></div>
+      <button class="auth-btn" onclick="doRegister()">Create Business Account</button>
+      <div class="auth-err" id="rErr"></div>
+    </div>
+
+    <p class="auth-back" onclick="try{sessionStorage.removeItem('fromBiz');}catch(e){}goIndex()">← Back to Hub website</p>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="dash">
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sb">
+      <div class="sb-top">
+        <div class="sb-brand" onclick="try{sessionStorage.removeItem('fromBiz');}catch(e){}goIndex()">
+          <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAH0AfQDASIAAhEBAxEB/8QAHQABAAICAwEBAAAAAAAAAAAAAAcIBAYBBQkDAv/EAFEQAQABAwIBBQgNCAcGBwAAAAABAgMEBQYRBwgSITE1QVFVYXSy0hMUFxgiN3F1gZGVsbMWMkJSVpOh0zZFYoKUwdEVJTNUcqIjNENjc4Pw/8QAHAEBAAIDAQEBAAAAAAAAAAAAAAUGBAcIAwIB/8QAQhEBAAECAwIICQoGAwEBAAAAAAECAwQFEQYxEiFBYXGBkcEHMjM0NVFSodETFBUWF1NysbLwIkNUgpLCQtLhI2L/2gAMAwEAAhEDEQA/AJgAcqtlgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANb5Rt34WyNvRrWfi5GTZm/RZ6Fno9LjVx4T8KYjh1PbD2LmIu02rUa1TxRD5rrpt0zVVOkQ2QQnPOM21H9Rav9dr13Hvjds+ItX+u166c+qecfcT7viwvpTCe3CbRCcc4zbU/1Fq/12vXTYjsflOMy7g/Orc08LXTXl03/myLGKtX9fk6tdABHPcAAAAEM5vOE25i5l/Gr0TVqqrNyq3MxNrhM0zMfr+R8ffGbZ8Rav8AXa9dYY2UziY1ixPu+LBnM8LH/OE2CE/fGba8Rav9dr1298mHKBp2/sXOyNPwsvFpw7lNuuL/AEeNU1Rxjh0Zlj4vZ/MsHam9ftTTTHLxPu1jsPdq4FFWstxAQzLAR3yh8r21tn5VWBVVd1LUafz8fFmOFv8A66pnhE+TrnyMvB4HEY258lh6Jqq5v3xPK9et2aeFcnSEiCDNN5x2jXciKc7bmdj2pnrrtXqLkx9E9FMG2df0jcmlW9T0XOtZeNX1dKjtpnvxVE9dM+SWVmGSY/LoirE2ppieXfHbGsPOxjLGInS3Vq7MBFMkCeqOMov31y27U23m3MDFpvaxl2pmLkYtVMW6Kv1ZrnqmfJHHgzcDl2Kx9z5PDUTVPN38kPK9ft2KeFcnSEoCD9H5xehZGVTb1LQs7CtTPCbtu5Te6Plmnqnh8nFMeiarp2taZZ1LSsu1l4l6ONu7bnjE/wCk+Set75hk2Oy7ScVbmmJ5eTtjWHxYxdnEeTq1ZoCLZACGMznDbbxsu9j1aJq1VVq5VbmYm1wmaZmP1vIkMBlWLzCaow1uauDv053hfxNqxp8pVpqmcQn74zbPiPV/rteu498btnxFq/12vXSX1Tzj7ifd8WP9KYT24TaIS98btnxFq/12vXPfG7a8Rav9dr1z6p5x9xPu+J9KYT24TaIT98ZtrxFq/wBdr13HvjNteItX+u1659U84+4n3fE+lMJ7cJtEJxzjNs+I9X+u167tdM5fth5VdNGT/tTA49tV7F6VMT/9c1T/AAfFzZfN7cazh6uqNfyfVOZYWqdIrhK46Tbu7dtbhoirRdbws2Z/Qt3I6cfLTPXH0w7tC3bNyzVwLlMxPqmNJZdNdNca0zrAA8n0AAAAAAAAAAAAAAAAAAAAIm51nxXU/ONn7qksol51nxX0fONn7q07sz6Xw/4oYeY+a3OhVBy4HRqgEvQmHntPZL0Jhqnwmb8N/f8A6rNs7/M6u8AarWUAAABQPXe7ef51d9OWGy9d7t5/nV305YcOpbPk6eiGtq/GlysfzPe424vOrP4cq3rIczzuNuLzqz6Eqpt16FudNP6oSeS+d09f5J5AaFXZpPLdue9tPk8ztRxKppzL0042NV+rXX+l9ERVP0KX3a6rlyq5XVNVVUzVVMzxmZntmVsOdNpt/O5L5yLFNVXtHNtZFyI/U4VUTP0dOJVMbq8Hdm1Tl1VynxpqnXqiNI7+tUM+rqnERTO6I4nKReb/ALtv7a39hY1V2YwNTu04uRRM/B6VU8KK/liqY+iZRy7/AJOdPyNV35oODjUzVcr1CzV1d6mmuKqp+immZ+hb82sWr+Bu273izTOvZv6t6LwtdVF6mqjfqvUEdg5mbDRZzld25G29k28HAuzazdVuTZprpnhNFqI43Jjy9dNP95UqZ4ysbzwNPyLml6BqtFFVVixeu2Lsx2UzXTTNP19CqPqVxlvXYKxZt5TTXR41UzwumJ0j3aKXndddWKmJ3Rpo5S7zYd15Glb3o2/dvT7R1SKqYomfg03qaZmmqPLMRMeXqRD329cgumZGp8q2iRYiejjXvbV2rh+bRREz/GeEfSnNobNq9ll+m9u4Mz1xGse9h4CuqjE0TTv1hc8Bzc2AT2KB653az/Orvp1L+T2KBa53azvOrvp1NoeDTymI6Ke9XNofFt9fcw3Lg4tsquAAOXAAA/R9Me/ex71F6xcrt3KZ4010VTTMT5JhMXJfy56xo9drTd0Tc1TT+PCMievItR8v6cfL1+WUMuEbmWU4TMrXyeJoiY9fLHRPIyMPiruHq4VudF/tF1TT9a0yxqWl5dvKxL9PSt3bc9Ux/lPknrhmKech/KLk7L1+jGzL1VWiZdUU5NuqeMWpnsu0+CY7/hj5IXBtXKLtqi7arproriKqaqZ4xMT2TEtEbR5BdyXE/JzOtFXHTPr5p545V0y/HU4u3wt0xvh+gFeZ4AAAAAAAAAAAAAAAAAAiXnWfFfR842fuqS0iXnWfFfR842fuqTuzPpfD/ihhZj5rc6FUAHRqguKux6FQ89qux6Ew1T4TN+G/v/1WbZ3+Z1d4A1WsoAAACgeu928/zq76dTCZuu928/zq76dTCdS2fJ09ENbV+NIshzPO424vOrPoSreshzPO424vOrP4cqpt16FudNP6oSeS+d09f5J5AaFXZj6jh42oYF/BzLVN7Hv25t3aKuyqmY4TCr3KJyGbi0nUL2Rty1Vq2m1VTVappmIvW4/VqifzuHhjt8ELUicyTaDF5NcmqxMTE74ndP8A6w8ZgbWLpiK98cqk+n8mG+83Jixb2xqFEzPXVdo9jpj6auELCciPJRa2VTVq+rXbeTrN2joxFH/Dx6J7aaZ/Sqnv1fREd+ZU4QJTONtMfmdmbExFFM79NdZ5tZ5GNhMosYevh755wBT0q6vdWhafuXQMrRdTtzXjZNHRq4dtM9sVR4JieEwqvvPkV3loWZc9o4dWs4fS/wDDvYsfCmO90qOPGJ+TjHlW8FhyPaXGZNMxZ0mmd8Tu19fNLBxuXWsXpNfFMcsKV6PyWb81PKps29uZtiJnrryKfYqY+WalkuRnk1xdh6Zcu371OXq+VEe2L8RwpojvUUd/h4ZnrmfB1REhDLzrbDHZta+QqiKaOWI5emZeWDymzhauHHHPOAKmkyexQPXO7Wd51d9OpfyexQPXO7Wd51d9OptDwaeUxHRT3q5tD4tvr7mFIDbKrt55NOTLWt+4WblaXmYFijEu0264yK64mZmOPV0aZ6m2+913f410T97c9RtvM+7ga/53a/DTs1HtDthmeBzK7h7NURTTMacUeqJWnAZVh72HpuVxxzzque913f410T97d9Rz73Xd/jTRP3tz1FohC/X3OPaj/GGZ9CYT1T2qrZnN73pYtTXaytJyao/Qt36on/uoiEdbs2nr+1sqnH1zTL+JNfH2OuuONFzh+rVHVK9zrtx6Jpm4dIv6Vq+JbysW9HCqmuOye9VE96Y70wkMv8IeOt3I+dUxVTy6RpPVyMe/kNmqn/5TMT7lBxtHKjtO/szeOXotyaq7McLuNdq/9S1Vx6M/L1TE+WJau3BhsRbxNmm9anWmqNY61VuW6rdU0Vb4IWx5sG469Z5P/wDZl+5Nd/SrnsEcZ4z7FMcaPq64+hU5NfNEz6rW99V0zjPQydO9m4d7jbuUxH8LkqxtvgqcTlFyqd9GlUflPumUjk96beKpjkniWeAaDXcAAAAAAAAAAAAAAAAAARLzrPiup+cbP3VJaRLzrPivo+cbP3Vp3Zn0vh/xQwsx81udCqEgQ6MUEnsl6Ex2PPaeyXoTHY1V4TN+G/v/ANVm2d/mdXeANVrKAAAAoHr3dzP86u+nUwoZuv8Ad3UPOrvp1MJ1LY8nT0Q1tX40iyHM97jbi86s/hyreshzPe424vOrP4cqpt16FudNP6oSeS+d09f5J5B1W7Nf03bGg5Otarem3jY9PGeEcaq571NMd+Znqhom3bru1xRRGszxRC61VRTEzO6Hais2sc4ncFzNqnS9IwMfG4/BpvTVcrmPLMTEcfkb9yRcs2Ju7UqNE1fFt6fqV2J9r1UVzNu/MRxmmOPXFXDjPDv8Fjxmx+a4TDziLlv+GOOdJiZjpj4I+1muGu18CmrjS2ArCRAAAAB1m6dd03bWg5Wtare9ixcanjVPbNU9kUxHfmZ4REK96zziddrzap0nR8GxjRPwYvzVcrmPLMTERPyJzKdnsfm0TVhqNYjlmdI19TDxWPsYXSLk8crLiJ+SHljxN4Z8aLquLbwNUqp42Zor427/AA7aY49cVcOvh3+vrSwwcwy3E5demxiaeDV++OJe1jEW8RRw7c6wT2KB653az/Orvp1L+T2KB653azvOrvp1NheDTymI6Ke9BbQ+Lb6+5huHI2yq6yXM+7ga/wCd2vw07IJ5n3cDcHndr0E7Oe9sPTV/pj9ML3lPmlH75QBWkgA+eTfs42PcyMi7RatW6ZqrrrnhFMR2zMv2ImZ0gVz54VuxGtbeu0xT7PVjX6a54dc0xVRNPH6Zq+uUDN45bd30by31kZ+NV0sDHojGxJ8NumZnpf3pmZ+Tg0d0Zszg7uDyqzZu+NEcfNrMzp1a6KDmN2m7ia66dwmDml2a6uUzLvU0zNFvSbsVVeCZu2uH3Sh/vLIc0TRKrOlaxr923wnJuUY1qqY/Ro4zVw+mqPqYm2OIpsZPe1/5RER1z8HplNua8XRpycaeQHPq9AAAAAAAAAAAAAAAAAACJedZ8V1HzjZ+6pLSJedZ8V9HzjZ+6tO7M+l8P+KGFmPmtzoVQO8EOjVBPCuB7uPJnH9fX/s7I9RT+RX882bwudfJ/OKqo4GumkxG/TfrE+pnYLMLmD4XycRx+vmXB93Lkz8fX/s7I/lnu48mfj699nZHqKfCA+znK/br7af+rO+n8T6o7J+K4Hu5cmfj6/8AZ2R/LPdy5M/H1/7OyP5an/EPs5yv26+2n/qfT+J9Udk/FcD3cuTPx9f+zsj+We7lyZ+Pr32dkfy1QHB9nOV+3X20/wDU+n8T6o7J+LK1i9ayNVy79mvpW7t+5XRMxw40zVMxPCfJLFgF9opiimKY5EJM6zqLIcz3uNuLzqz+HKt6yHM87jbi86s+hKo7dehbnTT+qEpkvndPX+SeUG876/kUba0PHomqLFzMrquRx6pqpt/B4/XUnJF3Od0avVOTG7k2qOlc07IoyeqOvo9dNX8KuP0NSbL3qLOb2Kq93C07eKPfK05lRNeFriPUqQy9HzLun6tiZ1muaLmPeou01R2xNNUT/kxCO10RXTFdM0zulQonSdYegWDfpycKxk0zE03bdNccJ49UxxfZF3Ny3na3Jsq1pWRcj/aWk0RYuRM9dy32UVx9HwZ8seVKLmbMsDcwGKrw9yNJpnT4T1xxtiYe9TetU3KeUAYL2AcV1U0UTXXVFNNMcZmZ4REP0QRzvdTqt6Rouk0V8IvX679ynwxTTwj+NUq3t+5d9329378v5GHX0tPw6fa2LP68RMzVX9NUzw8kQ0F0PsrgK8BlVq1cjSqeOeudfyUPM78XsTVVTu3djudjXsixvTRLuJVVF+nUMfoTT28fZKYXvjsU05AdGr1jlT0iOhM2sO5OXcnwex9cf93RXLa98JF6irG2rcb4p4+ueL8k7s/RMWaqp3TJPYoHrndrO86u+nUv5PYoHrndrO86u+nUyvBp5TEdFPe89ofFt9fcwgG2lXTXzct/7V2dpGr4+4dRrxLuTk0V2qaca7c6VMUcJnjRTPDr8KVfdy5M/H1/7OyPUU/FNzLYjL8xxNeJu11xVVv0mNN2nsylsPnF+xbi3TEaR0/FcH3ceTPx9f8As7I9RxPLlyZx/X1+fk07I9RT8YX2c5X7dfbT/wBXt9P4n1R2T8Vqdb5wezcW3VGl4+oalcjsn2H2Gifpr4T/AAQvyl8q+4960zh3ZowNL48faliZ4V+Wuqeur5OqPJ30fCZyzZHLMuri5bo4VUbpqnXTu9zExGaYnERwap0jmOPEGw7G2dru8tUnB0XF9k6HCb16uejbtRPfqn/KOuVgv37WHtzdu1RTTG+ZYFFFVyqKaY1mWLs/b+o7n3Bi6Npdrp5GRVw48Oqinv11eSI613Nn6DhbY21g6HgRPsGJaijpT+dXV21Vz5ZnjM/K6Hkq5PdK2HpHsOP0cnUb0R7ay5p4VVz+rT4KY70fTLdGjdrtpvpe9Fqz5Kjdzz6/h/6ueVZd81o4VfjT7uYAU1LAAAAAAAAAAAAAAAAAACJedZ8V9HzjZ+6pLSJedbx9y+j5xs/dWndmfS+H/FDCzHzW50KoAOjVBAlIXuM8ofiKf39v1mJisfhcJp84uRTru1mI17XrbsXLuvApmehHokL3GeUPxFP7+36x7jXKH4iq/fW/WYn09ln9RR/lHxenzLEexPZKPRIXuNcofiKr99b9Y9xrlD8RVfvrfrH07ln9RR/lHxPmWI9ieyUeiQvca5Q/ENX7636x7jPKHP8AUVX7+36x9O5Z/UUf5R8T5liPYnslHsj6ZNm5j5Fyxdp6Ny3XNFceCYnhP8YfOErExMawxtwshzPO424vOrPoSreshzPO424vOrPoSqG3XoW500/qhK5L53T1/knlj6lh4+o6fkYGXbi5j5Fuq1conv01RwmGQND01TTMTG9dpjWNJUV5QNs5m0d15uh5fSqixXxs3Zj/AItqfzK/pjt8vF0K3/LrydUb10KMvAoinWsKmZx57IvU9s26vvie9PyyqLmY1/DyruLk2q7N6zXNFy3XTwqpqieExMd6XQWy+fW83wkTM/8A0p4qo5/X0T/4omZYKrC3Zj/jO52O09xattfWrOraNlTj5NufBxprp79NUd+J8C0fJ5y0bX3JYtWNUyLWi6lPCmq3kV8LVdX9iuerr8E8J+VUYjsemebM4POYibscGuN1Ub+v1x+4fmCzG7hJ/h449T0Gt10XKKblFVNVFUcYqieMTHyv1xjwqEaVrutaTHDS9Xz8KP1bGRXRH1RPBn3d77xu0TRc3RrE0zHCY9uVxxj61Er8GuIir+C/ExzxMd8/mmo2ho046J7V0ty7l0HbeJ7Z1zVcXBomPgxduRFVfkpp7ap+SFdOWXlovbjxruh7Zi9iabVxpv5FUdG5kR+rEfo0+Hvz5I7Ycv372ReqvX7ty7dq/OruVTVVPyzPW+ayZLsLg8vuRevVfKVxu1jSI6uP3z1I/GZ1dv0zRRHBie0nrkiJmeo76SeQ7k4v701ynMzrVdGh4lfHIr7PZqo6/YqZ8vfnvR5ZWzH4+zgMPViL86U0/vSOeUXYsV364oojjlLXNc2dVo+2r25c630cvVIiLFMx10WKeyflqnjPyRSmV+LFq3Ys0WbNFNFu3TFNFNMcIpiOqIh+3Oea5jczLF14m5vqnsjkjqhf8NYpw9qLdPIT2KB653azvOrvp1L+T2KB653az/Orvp1L/wCDTyuI6Ke9B7Q+Lb6+5hANsquDdeTnk01/feHl5WjX9Pt0Ylym3cjJu1UTMzHHq4Uy2r3vO+P+c0L/ABNz+Wh8TtBluFuzavXopqjfEsu3gcRcpiqiiZiUQCYPe874/wCb0P8AxNz+We963x/zeh/4m5/LeH1pyf8AqKX39G4r2JQ+JZy+QHflijjbjScmfBay5if+6mGjbq2XubbFX++9HycW3x4RdmONuZ8lUcY/izMLneX4urgWL1NU+rWNex5XcHftRrXRMQ19k6bqGbpuXRl6fl3sS/RPGm5armmqPphjdna4SVVMVxwao1iWPEzE6wn3ku5esmzXb0zeke2LMzFNGoUU8K6P/kpj86P7UcJ8k9qxGHk4+biWsvEv27+Peoiu3ct1RVTXTMcYmJjth59wmDm78pN7bur2tt6temrR8yvo2qqp/wDLXZnqmP7Mz1THemYnwtabV7F2qrdWLwFOlUcc0xumOb1Tzbp6d9hyzN6oqi1enWOSfitSETxjjA1EtIAAAAAAAAAAAAAAAAAAiXnW/FfR842furS0iXnWfFdR842furTuzPpfD/ihhZj5rc6FUA7w6NUFxV2S9Co7HnrV2PQqOxqnwmb8N/f/AKrNs7/M6u8AarWUAAABQPX5/wB+6h51d9OphM3X+7uoedXfTqYTqWx5OnohravxpFkOZ53G3F51Z9CVb1kOZ53G3F51Z/DlVNuvQtzpp/VCTyXzunr/ACTyA0KuwjLlj5JtP3rTXqmBXRha5TRwi7MfAv8ACOqm5w6+zqirtjq7Y6kmjNwGPxGX34v4erg1R+9J9cPK/Yov0TRcjWFDNzbc1rbeo1YGtafew70T1RXT8Gvy01dlUfI6pfrW9H0rW8GvC1fT8bOx6+23ftxXHyxx7J8sdaKNx83za2bVXc0fOzNMqnri3M+zW4n+98Lh9La2V+ETC3aYpxtM0VeuOOPjHv6VYxOQ3aZ1szrHvVcE5ZnNx12mqfae4dNu0972W1XRP8OLHs83Pdc18L2s6LRR4aKrtU/V0IWOna7JpjX5eOyfgwJyrFxOnA/JCrmmmqqYimJmZnhER35WE0fm4RFdNWrbk6VPfoxsfh/Gqf8AJJ2yuS/Z207kZGn6ZTfzIjqysqfZblP/AE8eqn+7EIrH7fZXh6Z+RmblXNGkds90SybGR4muf4/4YQVyUcimrbhvW9T3HRe0zSo4VRbqjheyPJET+bT5Z6/BHfWf0bTcHR9Mx9M03Gt42Jj0dC1aojhFMf8A7rZY1Xne0GLzi5wr06UxupjdHxnnWXB4G1hKdKN/rAEEzSexQPXO7Wd51d9OpfyexQPXO7Wd51d/EqbQ8GnlMR0U96ubQ+Lb6+5hANsqusnzPv6P6/55b/DTsgnmff0f1/zy3+GnZz3th6av9Mfphe8q80o/fKAK0kB8srHsZWPcxsmzbvWblM03LdymKqaontiYnth9R+xMxOsG9VjnA8l1natyncGg0TTpN+voXbHb7Wrns4f2J/hPy9UOr27+0izr2y9X0i9HGMnEuU0zw/Nr6MzTV9FURP0KJcePCfDDeWw2dXcxwdVu/OtduYjX1xO7Xn4phTM5wlOHvRVRGkVDmmZiePFwLsh10eQ7c1zdPJ1p+bk19LMx4nFyZ49dVdHVFX96noz8sy3hAnNAza6tM13T5mZpovW7sdfZxpmJ9GE9uctpMHTgs0vWaI0iJ1jonj71/wAvuzew1Fc79ABBswAAAAAAAAAAAAAAAARLzrPivo+cbP3VpaRLzrfivo+cbP3Vp3Zn0vh/xQwsx81udCqADoxQSe+9CY7HnrPZL0Khqrwmb8N/f/qs2zv8zq7wBqtZQAAAFA9f7u6h53e9OphQzdf7u6h51d9OphQ6lseTp6Ia2r8aRZDmedxtxedWfQlW9ZDme9xtxedWfw5VTbr0Lc6af1Qk8l87p6/yTyA0KuwAAAAAAAAAAABPYoHrvdrO86u+nUv5PYoHrndrP86u+nU2h4NPKYjop71c2h8W319zCAbaVdZPmff0f1/zy3+GnZBPM9/o/r/nlv8ADTs562w9NX+mP0wveVeaUfvlAFaSADC1nVdN0bAuZ+q52PhYtqONd29cimmPr7Z8nbL6ooqrqimmNZl+TMRGsup5TNbtbe2HrOq3Koiq1i102omfzrlUdGiPpqmFGYjhERx7I4JU5deVD8tcq3pWlU12tFxq+nTNUTFWRX3qpjvRHejy8Z8kVt67E5JdyzBVVX40rrnWY9URuieffPWpecYynE3oijdSAdq5IlYXme26ojcF7oz0Z9hp497j8OVhESc1bR68Dk6r1G7RNNWpZVdyjj36KPgRP0zFUpbc87W36b+cX6qd0Tp2RET74XzK6JowlET+9QBXGeAAAAAAAAAAAAAAAAIk51vH3L6PnGz91aW0S8634r6PnGz91ad2Z9L4f8UMLMfNbnQqgd8HRqguJ770Kh561d96FQ1T4TN+G/v/ANVm2d/mdXeANVrKAAAAoHr/AHd1Dzq76dTCZuv93dQ87u+nUw3UtjydPRDW1fjS4WQ5nvcbcXnVn0JVvWQ5nncbcXnVn0JVTbr0Lc6af1Qk8l87p6/yTyA0KuwAAAAAAAAAAABPYoHrvdrO86u+nUv5PYoHrndrO86u+nU2h4NPKYjop71c2h8W319zCBy20q7a9jcoW5tl4uTjaDk49m3k3IuXYu48XJmqI4Rw49nU2L3duUXxhgf4Gn/VGIir+R5diLk3btmmqqd8zEasmjGX7dMU01zEdKT/AHdeUTxhg/4Gn/U93blF8YYP+Bp/1RiPH6uZV/T0f4w+/n+J+8ntSNm8tnKJlUdCdat2I/8AYxbdM/XMS0rXNd1jW8j2xq2p5ebc703rs1cPkjsj6HXOGZhcrwWEnWxappnmiIeNzE3rvFXVM9YAz3iO62Rt3M3TufC0PBpq9kya+FVcR/w6I66q58kR/lHfYWh6VqGtalZ07TMW7lZV6eFFu3HGZ8vkiPD2Qt1yKcnOPsXRZu5PsV7WcumPbV2nriiO2LdM+CO/Pfn6FY2m2itZPhp0nW7V4sd880e/ckcuwFWKuf8A5jfPc3fRtPxtJ0jE0zDtxbx8SzTZtUx3qaY4R9zLBz9VVNdU1VTrMrzEREaQAPl+gAAAAAAAAAAAAAAACJedb8V9HzjZ+6tLTD1fStM1jFjE1bTsTUMeKor9iybNN2jpR2TwqiY4pDKsZTgcbaxNUaxTMTo8MVZm9ZqtxywoELzfkFsf9jdvfZtn1T8g9j/sbt77Ns+q2f8AaVhvuKu2Fc+r1z24UYmep6FQ1yNh7Hjs2dt77Ns+q2NT9q9pLWefJfJ0TTwOFv59Pglcsy+rB8LhVa66e7UAVBKgAAAKCa/3d1Dzu9+JUwV6Lux9lXblV25tDQK666pqqqq061M1TPXMzPR7X5/IPY/7G7e+zbPqtuW/CRhqKYp+Qq4ueFWq2fuTOvDhRlZDmedxtxedWfQlK35B7H/Y3b32bZ9V2ei6Jo2i27lvRtJwNNou1RVcpxcei1Fcx1RMxTEcZRG0G2tjNcDVhaLU0zOnHMxyTEsvA5PXhr0XJqidHYANdJ4AAAAAAAAAAAAnsUD1zu1nedXfTqX8a9d2Nsq7cquXNobfrrrqmqqqrTrMzMz1zMz0e1bdldo7eSVXarlE1cLTdza/FF5ngKsZFMUzpoouLzfkHsf9jdvfZtn1T8gtjfsbt77Ns+quX2lYb7irthE/V657cKMi835BbG/Y3bv2bZ9U/IPY/wCxu3vs2z6p9pWG+4q7YPq9c9uFGheX8gtj/sbt77Ns+qfkFsb9jdu/Zln1T7SsN9xV2wfV657cKNOOrwx9a835BbH/AGN299m2fVZOHtLauHMzh7a0bHme2bWDap+6l+VeErD6cVie2H7Gz1zlrjsUg0rRdW1W7FvTdNy8uqZ4cLNmqv7oSdsrkG3Vq92i9rlVvRcPtmK5iu/VHkojqj5Zn6JWot2rdumKbduiiI6uFMcIftC4/wAIuNvUzThrcUc/jT3R7pZdjILNE63Kpq9zWNg7F29srCqs6PiRF+5EReyrnCq7d4d6avB5I6mzgoWIxF3E3Ju3qpqqnfMpu3bpt0xTTGkADwfYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//2Q==" alt="Hub">
+          <div>
+            <div class="sb-brand-name">HUB</div>
+            <div class="sb-brand-sub">Business Portal</div>
+          </div>
+        </div>
+        <div class="biz-pill">
+          <div class="biz-av" id="sbAv">B</div>
+          <div class="biz-name" id="sbName">Business</div>
+        </div>
+      </div>
+      <nav class="sb-nav">
+        <button class="ni on" onclick="swPanel('overview',this)"><span class="nic">📊</span>Overview</button>
+        <button class="ni" onclick="swPanel('events',this)"><span class="nic">📅</span>My Events</button>
+        <button class="ni" onclick="swPanel('submit',this)"><span class="nic">➕</span>Submit Event</button>
+        <button class="ni" onclick="swPanel('analytics',this)"><span class="nic">📈</span>Analytics</button>
+        <button class="ni" onclick="swPanel('notif',this)"><span class="nic">🔔</span>Notifications<span id="notifBadge" style="display:none;background:#e74c3c;color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:100px;margin-left:6px;vertical-align:middle;">0</span></button>
+        <button class="ni" onclick="swPanel('profile',this)"><span class="nic">⚙️</span>Profile</button>
+      </nav>
+      <div class="sb-foot">
+        <button class="sout" onclick="signOut()">🚪 Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- OVERVIEW -->
+      <div class="panel on" id="pn-overview">
+        <div class="ph">
+          <h1 id="ovGreet">Welcome Back</h1>
+          <p id="ovDate"></p>
+        </div>
+        <div class="sgrid" id="ovStats"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <h2 style="font-size:17px;font-weight:800;color:var(--wh);">Your Events</h2>
+          <button onclick="swPanel('submit',document.querySelector('.ni:nth-child(3)'))" style="background:var(--y);color:var(--bk);border:none;padding:8px 18px;border-radius:100px;font-size:12px;font-weight:800;cursor:pointer;">+ Submit New</button>
+        </div>
+        <div class="ev-list" id="ovEvents"></div>
+      </div>
+
+      <!-- MY EVENTS -->
+      <div class="panel" id="pn-events">
+        <div class="ph"><h1>My Events</h1><p>All events you've submitted to Hub</p></div>
+        <div class="ev-list" id="myEvents"></div>
+      </div>
+
+      <!-- SUBMIT EVENT -->
+      <div class="panel" id="pn-submit">
+        <div class="ph"><h1 id="submitPanelTitle">Submit an Event</h1><p id="submitPanelSub">Fill in the details below and choose a package. Your event goes live once approved.</p></div>
+        <div class="edit-mode-banner" id="editBanner" style="display:none;">
+          <span>✏️ Editing event — changes will go for re-review</span>
+          <button class="ev-btn ev-btn-del" onclick="cancelEdit()" style="padding:6px 14px;">Cancel Edit</button>
+        </div>
+        <div class="notice">📋 All submissions are reviewed by the Hub team before going live. You'll be able to track the status in My Events.</div>
+        <div class="form-card">
+          <h2>Event Details</h2>
+          <div class="fg2"><label>Event Title *</label><input type="text" id="evTitle" placeholder="e.g. Wine Tasting Evening at Mission Estate"></div>
+          <div class="frow">
+            <div class="fg2"><label>Category *</label>
+              <select id="evCat">
+                <option value="">Select category...</option>
+                <option>Food &amp; Drink</option><option>Wine Events</option>
+                <option>Arts &amp; Culture</option><option>Music</option>
+                <option>Sports</option><option>Markets</option>
+                <option>Community</option><option>Deals</option>
+              </select>
+            </div>
+            <div class="fg2"><label>Venue / Location *</label><input type="text" id="evLoc" placeholder="e.g. Napier Waterfront"></div>
+          </div>
+          <div class="frow">
+            <div class="fg2"><label>Date *</label><input type="date" id="evDate"></div>
+            <div class="fg2">
+              <label>Time *</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="time" id="evTimeStart" placeholder="Start time" style="flex:1;">
+                <span style="color:var(--mt);font-size:13px;white-space:nowrap;">to</span>
+                <input type="time" id="evTimeEnd" placeholder="End (optional)" style="flex:1;">
+              </div>
+              <div style="font-size:11px;color:var(--mt);margin-top:4px;">End time is optional</div>
+            </div>
+          </div>
+
+          <!-- RECURRING -->
+          <div style="margin-bottom:20px;">
+            <label style="display:block;font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Repeat Event <span style="font-weight:400;">(optional)</span></label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+              <button type="button" class="repeat-opt on" onclick="setRepeat('none',this)">Does not repeat</button>
+              <button type="button" class="repeat-opt" onclick="setRepeat('weekly',this)">Weekly</button>
+              <button type="button" class="repeat-opt" onclick="setRepeat('fortnightly',this)">Fortnightly</button>
+              <button type="button" class="repeat-opt" onclick="setRepeat('monthly',this)">Monthly</button>
+              <button type="button" class="repeat-opt" onclick="setRepeat('custom',this)">Custom dates</button>
+            </div>
+            <div id="repeatUntilRow" style="display:none;margin-bottom:10px;">
+              <label style="font-size:12px;color:var(--mt);font-weight:600;display:block;margin-bottom:6px;">Repeat until</label>
+              <input type="date" id="evRepeatUntil" style="max-width:220px;">
+            </div>
+            <div id="repeatCustomRow" style="display:none;">
+              <label style="font-size:12px;color:var(--mt);font-weight:600;display:block;margin-bottom:8px;">Pick up to 20 specific dates</label>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+                <input type="date" id="evCustomDateInput" style="max-width:200px;">
+                <button type="button" onclick="addCustomDate()" style="background:var(--y);color:var(--bk);border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;">+ Add Date</button>
+              </div>
+              <div id="customDateCount" style="font-size:11px;color:var(--mt);margin-bottom:8px;display:none;"></div>
+              <div id="customDateList" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+            </div>
+            <div id="repeatPreview" style="font-size:12px;color:var(--mt);margin-top:8px;"></div>
+          </div>
+          <div class="frow">
+            <div class="fg2"><label>Ticket Price</label><input type="text" id="evPrice" placeholder="Free, $25, $10–$30..."></div>
+            <div class="fg2"><label>Website / Tickets URL</label><input type="text" id="evUrl" placeholder="https://..."></div>
+          </div>
+          <div class="fg2"><label>Description</label><textarea id="evDesc" placeholder="Tell people what makes your event special..."></textarea></div>
+
+          <div style="margin-bottom:20px;">
+            <label style="display:block;font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Event Image <span style="color:var(--mt);font-weight:400;">(optional)</span></label>
+            <div class="img-drop" id="imgDrop" onclick="document.getElementById('evImg').click()">
+              <div class="img-drop-icon">📸</div>
+              <p><strong>Click to upload</strong> or drag &amp; drop</p>
+              <p style="font-size:11px;color:var(--mt);margin-top:4px;">JPG, PNG up to 5MB</p>
+              <input type="file" id="evImg" accept="image/*" style="display:none" onchange="handleEvImg(event)">
+            </div>
+            <div id="evImgPreview" style="display:none;margin-top:10px;position:relative;">
+              <img id="evImgThumb" style="width:100%;max-height:200px;object-fit:cover;border-radius:12px;border:1px solid var(--br);">
+              <button onclick="clearEvImg()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;">✕</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom:20px;">
+            <label style="display:block;font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Listing Package</label>
+            <div class="pkg-grid">
+              <div class="pkg-opt on" onclick="selPkg(this,'Starter')" id="pkg-Starter">
+                <div class="pkg-name">Starter</div>
+                <div class="pkg-price">FREE</div>
+                <div class="pkg-desc">Basic listing on events page</div>
+              </div>
+              <div class="pkg-opt" onclick="selPkg(this,'Featured')" id="pkg-Featured">
+                <div class="pkg-name">Featured</div>
+                <div class="pkg-price" id="bizPkgPriceFeatured">$19</div>
+                <div class="pkg-desc">Highlighted + priority placement</div>
+                <span class="pkg-badge">Popular</span>
+              </div>
+              <div class="pkg-opt" onclick="selPkg(this,'Premium')" id="pkg-Premium">
+                <div class="pkg-name">Premium</div>
+                <div class="pkg-price" id="bizPkgPricePremium">$49</div>
+                <div class="pkg-desc">Sponsored badge + homepage feature</div>
+              </div>
+            </div>
+          </div>
+
+          <input type="hidden" id="selPkgVal" value="Starter">
+          <button class="submit-btn" onclick="submitEvent()">Submit for Review →</button>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="panel" id="pn-analytics">
+        <div class="ph"><h1>Analytics</h1><p>How your events are performing on Hub</p></div>
+        <div class="sgrid" id="anStats"></div>
+        <div class="analytics-grid" id="anCharts"></div>
+        <div class="tip-card">
+          <h3>💡 Tips to get more views</h3>
+          <div class="tip"><span class="tip-ico">🖼️</span>Events with detailed descriptions get 3× more clicks — make yours stand out!</div>
+          <div class="tip"><span class="tip-ico">📅</span>Submit events at least 2 weeks in advance for maximum visibility.</div>
+          <div class="tip"><span class="tip-ico">⭐</span>Upgrade to Featured or Premium to appear at the top of search results.</div>
+          <div class="tip"><span class="tip-ico">🏷️</span>Pick the right category — it's how most people discover events on Hub.</div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="panel" id="pn-notif">
+        <div class="ph"><h1>Notifications</h1><p>Reviews, admin actions, and activity on your business</p></div>
+        <div id="notifList"><div class="empty"><div class="ei">🔔</div><p>No notifications yet</p></div></div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="panel" id="pn-profile">
+        <div class="ph"><h1>Business Profile</h1><p>Manage your account details</p></div>
+        <div class="profile-card" style="max-width:600px;">
+
+          <!-- Avatar -->
+          <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:28px;">
+            <div class="profile-av-big" id="profAv" onclick="document.getElementById('bizProfImgIn').click()" style="cursor:pointer;position:relative;overflow:hidden;width:88px;height:88px;font-size:34px;">
+              <span id="profAvLetter">B</span>
+              <div style="position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:18px;" id="profAvOverlay">📷</div>
+            </div>
+            <input type="file" id="bizProfImgIn" accept="image/*" style="display:none" onchange="handleBizProfImg(event)">
+            <p style="font-size:12px;color:var(--mt);margin-top:8px;">Click to change photo</p>
+          </div>
+
+          <!-- Profile info -->
+          <div style="background:var(--dk);border-radius:14px;padding:20px;margin-bottom:14px;border:1px solid var(--br);">
+            <div style="font-size:11px;font-weight:800;color:var(--mt);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;">Profile</div>
+            <div class="fg2"><label>Business Name</label><input type="text" id="pName" placeholder="Business name"></div>
+            <div class="fg2"><label>Phone Number</label><input type="tel" id="pPhone" placeholder="021 000 000"></div>
+            <button class="submit-btn" onclick="saveProfileInfo()" style="margin-top:4px;">Save Profile</button>
+          </div>
+
+          <!-- Change email -->
+          <div style="background:var(--dk);border-radius:14px;padding:20px;margin-bottom:14px;border:1px solid var(--br);">
+            <div style="font-size:11px;font-weight:800;color:var(--mt);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;">Email Address</div>
+            <div class="fg2"><label>Current Email</label><input type="text" id="pEmail" placeholder="Email" readonly style="opacity:.6;cursor:not-allowed;"></div>
+            <div class="fg2"><label>New Email</label><input type="email" id="pNewEmail" placeholder="new@email.com"></div>
+            <div class="fg2"><label>Confirm Password</label><input type="password" id="pEmailPass" placeholder="Your current password"></div>
+            <button class="submit-btn" onclick="saveProfileEmail()" style="margin-top:4px;">Update Email</button>
+          </div>
+
+          <!-- Change password -->
+          <div style="background:var(--dk);border-radius:14px;padding:20px;margin-bottom:14px;border:1px solid var(--br);">
+            <div style="font-size:11px;font-weight:800;color:var(--mt);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;">Change Password</div>
+            <div class="fg2"><label>Current Password</label><input type="password" id="pCurPass" placeholder="Current password"></div>
+            <div class="fg2"><label>New Password</label><input type="password" id="pNewPass" placeholder="Min. 8 chars, 1 capital, 1 number, 1 special"></div>
+            <div class="fg2"><label>Confirm New Password</label><input type="password" id="pConfPass" placeholder="Repeat new password"></div>
+            <button class="submit-btn" onclick="saveProfilePass()" style="margin-top:4px;">Change Password</button>
+          </div>
+
+          <!-- Backup & Restore -->
+          <div style="background:var(--dk);border:1px solid rgba(52,152,219,.3);border-radius:14px;padding:20px;margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:800;color:#3498db;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;">&#x1F4BE; Backup &amp; Restore</div>
+            <p style="font-size:13px;color:var(--mt);margin-bottom:16px;">Save all Hub data — events, users, passwords, everything — to a file. Restore on any device including your iPad.</p>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:10px;">
+              <button onclick="bizFullBackupExport()" style="width:100%;padding:12px;background:#3498db;color:#fff;font-weight:800;font-size:13px;border:none;border-radius:10px;cursor:pointer;">&#x2B07;&#xFE0F; Download Backup</button>
+              <input type="file" id="bizRestoreInput" accept=".json" style="display:none;" onchange="bizFullBackupRestore(event)">
+              <button onclick="document.getElementById('bizRestoreInput').click()" style="width:100%;padding:12px;background:transparent;color:#2ecc71;font-weight:800;font-size:13px;border:1px solid rgba(46,204,113,.4);border-radius:10px;cursor:pointer;">&#x2B06;&#xFE0F; Restore from Backup File</button>
+            </div>
+            <div id="bizBackupStatus" style="display:none;font-size:12px;color:#2ecc71;font-weight:700;padding:10px;background:rgba(46,204,113,.08);border-radius:8px;"></div>
+          </div>
+
+          <!-- Danger zone -->
+          <div style="background:rgba(231,76,60,.06);border:1px solid rgba(231,76,60,.2);border-radius:14px;padding:20px;">
+            <div style="font-size:11px;font-weight:800;color:#e74c3c;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;">Danger Zone</div>
+            <p style="font-size:13px;color:var(--mt);margin-bottom:14px;">Permanently delete your business account and all events. This cannot be undone.</p>
+            <button onclick="deleteBizAccount()" style="width:100%;padding:12px;background:transparent;color:#e74c3c;border:1px solid rgba(231,76,60,.3);border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;">&#x1F5D1; Delete Account</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var curUser = null;
+var selectedPkg = 'Starter';
+
+function goIndex() {
+  var base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+  window.location.href = base + 'index.html';
+}
+
+// ── INIT ──
+try { curUser = JSON.parse(localStorage.getItem('hu') || 'null'); } catch(e) {}
+if(curUser && curUser.type === 'business') {
+  // Re-check status from hu_users in case admin actioned since last login
+  var allUsers = [];
+  try { allUsers = JSON.parse(localStorage.getItem('hu_users')||'[]'); } catch(e) {}
+  var freshUser = allUsers.find(function(u){ return u.email === curUser.email; });
+  if(freshUser) { curUser = freshUser; localStorage.setItem('hu', JSON.stringify(curUser)); }
+  if(curUser.status === 'suspended') {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;background:#0E0E0E;color:#F0F0F0;padding:32px;text-align:center;"><div style="font-size:64px;">⏸</div><h2 style="font-family:Bebas Neue,sans-serif;font-size:36px;color:#e67e22;">Account Suspended</h2><p style="color:#777;max-width:420px;">' + (curUser.statusMessage || 'Your account has been suspended. Contact support for more information.') + '</p><a href=\"javascript:goIndex()\" style=\"color:#F5C200;text-decoration:none;font-weight:700;\">← Return to Hub</a></div>';
+  } else if(curUser.status === 'banned') {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;background:#0E0E0E;color:#F0F0F0;padding:32px;text-align:center;"><div style="font-size:64px;">🚫</div><h2 style="font-family:Bebas Neue,sans-serif;font-size:36px;color:#e74c3c;">Account Banned</h2><p style="color:#777;max-width:420px;">' + (curUser.statusMessage || 'Your account has been banned. Contact support if you believe this is an error.') + '</p><a href=\"javascript:goIndex()\" style=\"color:#F5C200;text-decoration:none;font-weight:700;\">← Return to Hub</a></div>';
+  } else {
+    showDash();
+  }
+} else if(curUser) {
+  // Logged in but not a business account - redirect to index
+  goIndex();
+}
+
+// ── AUTH TABS ──
+function switchTab(tab, btn) {
+  document.querySelectorAll('.auth-tab').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.auth-form').forEach(function(f){f.classList.remove('on');});
+  btn.classList.add('on');
+  document.getElementById('af-'+tab).classList.add('on');
+}
+
+// ── LOGIN ──
+// ── PASSWORD VALIDATION ───────────────────────────────────────
+function checkPass(p) {
+  if(p.length < 8)            return 'Password must be at least 8 characters';
+  if(!/[A-Z]/.test(p))        return 'Password must contain at least one capital letter';
+  if(!/[0-9]/.test(p))        return 'Password must contain at least one number';
+  if(!/[^A-Za-z0-9]/.test(p)) return 'Password must contain at least one special character';
+  return null;
+}
+function doLogin() {
+  var email = document.getElementById('lEmail').value.trim().toLowerCase();
+  var pass = document.getElementById('lPass').value;
+  var users = [];
+  try { users = JSON.parse(localStorage.getItem('hu_users') || '[]'); } catch(e) {}
+  var u = users.find(function(x) { return x.email.toLowerCase() === email && x.pass === pass; });
+  if(u && u.type === 'business') {
+    curUser = u;
+    try { localStorage.setItem('hu', JSON.stringify(u)); } catch(e) {}
+    showDash();
+  } else {
+    var err = document.getElementById('lErr');
+    err.style.display = 'block';
+    err.textContent = u ? 'This account is not a business account.' : 'Incorrect email or password.';
+    setTimeout(function(){ err.style.display = 'none'; }, 3500);
+  }
+}
+
+// ── REGISTER ──
+function doRegister() {
+  var name = document.getElementById('rName').value.trim();
+  var email = document.getElementById('rEmail').value.trim().toLowerCase();
+  var pass = document.getElementById('rPass').value;
+  var err = document.getElementById('rErr');
+  if(!name || !email || !pass) { err.style.display='block'; err.textContent='Please fill in all fields.'; return; }
+  var _pErr=checkPass(pass); if(_pErr){err.style.display='block';err.textContent=_pErr;return;}
+  var users = [];
+  try { users = JSON.parse(localStorage.getItem('hu_users') || '[]'); } catch(e) {}
+  if(users.find(function(x){ return x.email.toLowerCase() === email; })) {
+    err.style.display='block'; err.textContent='An account with this email already exists.'; return;
+  }
+  var user = { name: name, email: email, pass: pass, type: 'business', joinedAt: new Date().toISOString() };
+  users.push(user);
+  try { localStorage.setItem('hu_users', JSON.stringify(users)); } catch(e) {}
+  curUser = user;
+  try { localStorage.setItem('hu', JSON.stringify(user)); } catch(e) {}
+  showDash();
+  showToast("Welcome to Hub, " + name + "! 🎉");
+}
+
+// ── SHOW DASHBOARD ──
+function showDash() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('dash').style.display = 'block';
+  var ini = (curUser.name || 'B')[0].toUpperCase();
+  document.getElementById('sbAv').textContent = ini;
+  document.getElementById('sbName').textContent = curUser.name || curUser.email;
+  var profAvEl = document.getElementById('profAv');
+  if(curUser.avatar) {
+    profAvEl.innerHTML = '<img src="'+curUser.avatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"><div id="profAvOverlay" style="position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:18px;">📷</div><input type="file" id="bizProfImgIn" accept="image/*" style="display:none" onchange="handleBizProfImg(event)">';
+  } else {
+    var letter = document.getElementById('profAvLetter'); if(letter) letter.textContent = ini;
+  }
+  updateSidebarAvatar();
+  document.getElementById('sbName').textContent = curUser.name || '';
+  document.getElementById('pName').value = curUser.name || '';
+  if(document.getElementById('pPhone')) document.getElementById('pPhone').value = curUser.phone || '';
+  document.getElementById('pEmail').value = curUser.email || '';
+  document.getElementById('ovGreet').textContent = 'Welcome, ' + (curUser.name || 'there') + '!';
+  document.getElementById('ovDate').textContent = new Date().toLocaleDateString('en-NZ', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  renderAll();
+  applyBizPricing();
+}
+
+// ── SIGN OUT ──
+function signOut() {
+  curUser = null;
+  try { localStorage.removeItem('hu'); } catch(e) {}
+  goIndex();
+}
+
+// ── PANEL SWITCHING ──
+function swPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on');});
+  var panel = document.getElementById('pn-'+name);
+  if(panel) panel.classList.add('on');
+  if(btn) btn.classList.add('on');
+  if(name==='notif') { markNotifsRead(); }
+  renderAll();
+}
+
+// ── GET MY SUBMISSIONS ──
+function getMySubs() {
+  var all = [];
+  try { all = JSON.parse(localStorage.getItem('hub_ads') || '[]'); } catch(e) {}
+  return all.filter(function(s) { return s.bizEmail === curUser.email; });
+}
+
+// ── RENDER ALL ──
+function renderAll() {
+  renderOverview();
+  renderMyEvents();
+  renderAnalytics();
+  renderNotifications();
+  updateNotifBadge();
+}
+
+// ── FAKE VIEWS (deterministic from event id) ──
+function fakeViews(id) {
+  var n = String(id).split('').reduce(function(a,c){return a+c.charCodeAt(0);},0);
+  return ((n * 37) % 280) + 20;
+}
+function fakeClicks(id) {
+  var v = fakeViews(id);
+  return Math.round(v * (0.08 + (id % 10) * 0.015));
+}
+
+// ── OVERVIEW ──
+function renderOverview() {
+  var subs = getMySubs();
+  var approved = subs.filter(function(s){return s.status==='approved';});
+  var pending = subs.filter(function(s){return s.status==='pending';});
+  var totalViews = subs.reduce(function(a,s){return a+fakeViews(s.id);},0);
+  var totalClicks = subs.reduce(function(a,s){return a+fakeClicks(s.id);},0);
+
+  var ovStats = document.getElementById('ovStats');
+  if(ovStats) ovStats.innerHTML =
+    stat('yel','📅', subs.length, 'Total Submitted', '') +
+    stat('grn','✅', approved.length, 'Live on Hub', approved.length>0?'🟢 Active':'') +
+    stat('org','⏳', pending.length, 'Pending Review', pending.length>0?'Awaiting approval':'') +
+    stat('blu','👁️', totalViews, 'Total Views', '+' + Math.round(totalViews*0.12) + ' this week') +
+    stat('pur','🖱️', totalClicks, 'Total Clicks', Math.round(totalClicks/Math.max(totalViews,1)*100) + '% CTR');
+
+  var el = document.getElementById('ovEvents');
+  if(!el) return;
+  if(!subs.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-ico">📭</div><p>No events yet — submit your first one</p></div>';
+  } else {
+    el.innerHTML = subs.slice(0,4).map(evCard).join('');
+  }
+}
+
+function stat(cls, ico, num, lbl, trend) {
+  return '<div class="sc '+cls+'"><div class="sc-ico">'+ico+'</div><div class="sc-num">'+num+'</div><div class="sc-lbl">'+lbl+'</div>'+(trend?'<div class="sc-trend">'+trend+'</div>':'')+'</div>';
+}
+
+// ── MY EVENTS ──
+function renderMyEvents() {
+  var subs = getMySubs();
+  var el = document.getElementById('myEvents');
+  if(!el) return;
+
+  // Also check for admin-deleted events that belonged to this business
+  var deleted = [];
+  try { deleted = JSON.parse(localStorage.getItem('hub_deleted')||'[]'); } catch(e) {}
+  var archive = [];
+  try { archive = JSON.parse(localStorage.getItem('hub_archive')||'[]'); } catch(e) {}
+  var myDeleted = archive.filter(function(a){
+    return curUser && (a.bizEmail === curUser.email || a.biz === curUser.name);
+  });
+
+  if(!subs.length && !myDeleted.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-ico">🗓️</div><p>You have not submitted any events yet.</p></div>';
+    return;
+  }
+
+  var today = new Date(); today.setHours(0,0,0,0);
+  var active = subs.filter(function(s){
+    if(!s.date) return true;
+    var d = new Date(s.date + 'T00:00'); return d >= today;
+  });
+  var past = subs.filter(function(s){
+    if(!s.date) return false;
+    var d = new Date(s.date + 'T00:00'); return d < today;
+  });
+
+  var html = '';
+
+  if(active.length) {
+    html += '<div class="ev-section-label">Active & Upcoming</div>';
+    html += active.map(evCard).join('');
+  }
+
+  if(past.length) {
+    html += '<div class="ev-section-label" style="margin-top:28px;">📅 Past Events (' + past.length + ')</div>';
+    var bizKey = 'hub_reviews_' + curUser.email.replace(/[@.]/g,'_');
+    var bizReviews = [];
+    try { bizReviews = JSON.parse(localStorage.getItem(bizKey)||'[]'); } catch(e) {}
+    var avgRating = bizReviews.length ? (bizReviews.reduce(function(s,r){return s+r.stars;},0)/bizReviews.length).toFixed(1) : null;
+    if(bizReviews.length) {
+      html += '<div style="background:rgba(245,194,0,.07);border:1px solid rgba(245,194,0,.15);border-radius:12px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:16px;">' +
+        '<div style="font-size:32px;">⭐</div>' +
+        '<div><div style="font-size:22px;font-weight:800;color:var(--y);">'+avgRating+' / 5</div>' +
+        '<div style="font-size:12px;color:var(--mt);">'+bizReviews.length+' customer review'+(bizReviews.length!==1?'s':'')+' — visible on your public profile</div></div>' +
+        '</div>';
+    }
+    html += past.map(function(s){ return evCardPast(s); }).join('');
+  }
+
+  if(myDeleted.length) {
+    window._bizDeletedCache = myDeleted; // store for onclick access
+    html += '<div class="ev-section-label" style="margin-top:28px;color:#e74c3c;">🗑️ Removed by Admin (' + myDeleted.length + ')</div>';
+    html += myDeleted.map(function(a, i){
+      var dt = a.deletedAt ? new Date(a.deletedAt).toLocaleDateString('en-NZ',{day:'numeric',month:'short',year:'numeric'}) : '';
+      return '<div style="background:var(--dk);border:1px solid rgba(231,76,60,.25);border-left:3px solid #e74c3c;border-radius:14px;padding:18px 20px;margin-bottom:10px;">' +
+        '<div style="font-weight:800;font-size:15px;color:var(--wh);margin-bottom:4px;">'+a.title+'</div>' +
+        '<div style="font-size:12px;color:var(--mt);margin-bottom:10px;">'+(a.venue||'')+(a.date?' · '+a.date:'')+(a.cat?' · '+a.cat:'')+'</div>' +
+        '<div style="background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.2);border-radius:8px;padding:8px 12px;margin-bottom:12px;">' +
+          '<div style="font-size:10px;font-weight:800;color:#e74c3c;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Removed '+dt+' — Reason</div>' +
+          '<div style="font-size:12px;color:var(--tx);">'+a.reason+(a.note?' — '+a.note:'')+'</div>' +
+        '</div>' +
+        '<button onclick="resubDeletedEvent('+i+')" style="background:var(--y);color:#000;font-weight:800;font-size:12px;padding:8px 18px;border:none;border-radius:100px;cursor:pointer;">📅 Resubmit with New Date</button>' +
+      '</div>';
+    }).join('');
+  }
+
+  if(!html) html = '<div class="empty"><div class="empty-ico">🗓️</div><p>No events yet.</p></div>';
+  el.innerHTML = html;
+}
+
+function evCardPast(s) {
+  var catEM = {"Food & Drink":"🍔","Wine Events":"🍷","Arts & Culture":"🎨","Music":"🎵","Sports":"🏃","Markets":"🛍️","Community":"🤝","Deals":"🏷️"};
+  var em = catEM[s.category] || '📌';
+  return '<div class="ev-card" style="opacity:.7;border-color:rgba(255,255,255,.08);">' +
+    '<div class="ev-em">'+em+'</div>' +
+    '<div style="flex:1;">' +
+      '<div class="ev-title">'+s.title+'</div>' +
+      '<div class="ev-meta"><span>📍 '+s.location+'</span><span>📅 '+(s.date||'—')+'</span><span>💰 '+(s.price||'Free')+'</span></div>' +
+      '<div class="ev-badges"><span class="pill" style="background:rgba(255,255,255,.06);color:var(--mt);border:1px solid var(--br);">📅 Past</span><span class="pill pill-cat">'+s.category+'</span></div>' +
+    '</div>' +
+    '<div class="ev-actions">' +
+      '<button class="ev-btn" style="background:var(--y);color:#000;font-weight:800;" onclick="resubEventNewDate('+s.id+')">📅 Resubmit with New Date</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function getSaveCount(eventId) {
+  var count = 0;
+  try {
+    var users = JSON.parse(localStorage.getItem('hu_users')||'[]');
+    users.forEach(function(u) {
+      var key = 'hub_saved_' + u.email.replace(/[@.]/g,'_');
+      try {
+        var saved = JSON.parse(localStorage.getItem(key)||'[]');
+        if(saved.some(function(id){ return String(id)===String(eventId); })) count++;
+      } catch(e) {}
+    });
+  } catch(e) {}
+  return count;
+}
+
+function evCard(s) {
+  var catEM = {"Food & Drink":"🍔","Wine Events":"🍷","Arts & Culture":"🎨","Music":"🎵","Sports":"🏃","Markets":"🛍️","Community":"🤝","Deals":"🏷️"};
+  var em = catEM[s.category] || '📌';
+  var pc = {pending:'pill-p',approved:'pill-a',rejected:'pill-r'}[s.status]||'pill-p';
+  var pl = {pending:'⏳ Pending Review',approved:'✅ Live on Hub',rejected:'❌ Rejected'}[s.status]||'Pending';
+  var views = fakeViews(s.id), clicks = fakeClicks(s.id);
+  var mid = s.id;
+  var saves = getSaveCount(s.id);
+  var actions =
+    '<div class="ev-actions">' +
+    '<div class="ev-stats" style="text-align:center;margin-bottom:8px;"><div class="ev-views">'+views+'</div><div class="ev-views-lbl">Views</div><div style="font-size:11px;color:var(--mt);margin-top:2px;">'+clicks+' clicks</div><div style="font-size:11px;color:var(--y);margin-top:4px;font-weight:700;">🔖 '+saves+' saved</div></div>' +
+    '<button class="ev-btn ev-btn-edit" onclick="editEvent('+mid+')">✏️ Edit</button>' +
+    (s.status==='rejected' ? '<button class="ev-btn ev-btn-resub" onclick="resubEvent('+mid+')">↩ Resubmit</button>' : '') +
+    '<button class="ev-btn ev-btn-del" onclick="removeEvent('+mid+')">🗑 Remove</button>' +
+    '</div>';
+  return '<div class="ev-card '+s.status+'">' +
+    '<div class="ev-em">'+em+'</div>' +
+    '<div style="flex:1;">' +
+      '<div class="ev-title">'+s.title+'</div>' +
+      '<div class="ev-meta"><span>📍 '+s.location+'</span><span>📅 '+(s.date||'—')+'</span><span>💰 '+(s.price||'Free')+'</span></div>' +
+      '<div class="ev-badges"><span class="pill '+pc+'">'+pl+'</span><span class="pill pill-cat">'+s.category+'</span><span class="pill pill-cat">'+s.pkg+'</span></div>' +
+      (s.status==='approved'?'<div style="font-size:11px;color:var(--mt);margin-top:6px;">✏️ Editing a live event will send it for re-review.</div>':'') +
+      (s.status==='rejected'&&s.rejectReason?'<div style="margin-top:8px;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.2);border-radius:8px;padding:8px 12px;"><div style="font-size:10px;font-weight:800;color:#e74c3c;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Reason for rejection</div><div style="font-size:12px;color:var(--tx);line-height:1.5;">'+s.rejectReason+'</div></div>':'') +
+    '</div>' +
+    actions +
+  '</div>';
+}
+
+// ── NOTIFICATIONS ──
+
+function getBizReviews(email) {
+  try { return JSON.parse(localStorage.getItem('hub_reviews_'+email.replace(/[@.]/g,'_'))||'[]'); } catch(e) { return []; }
+}
+
+function saveBizReviews(email, reviews) {
+  localStorage.setItem('hub_reviews_'+email.replace(/[@.]/g,'_'), JSON.stringify(reviews));
+}
+
+function getBizNotifs(email) {
+  try { return JSON.parse(localStorage.getItem('hub_notifs_'+email.replace(/[@.]/g,'_'))||'[]'); } catch(e) { return []; }
+}
+function saveBizNotifs(email, notifs) {
+  try { localStorage.setItem('hub_notifs_'+email.replace(/[@.]/g,'_'), JSON.stringify(notifs)); } catch(e) {}
+}
+function updateNotifBadge() {
+  if(!curUser) return;
+  var reviews = getBizReviews(curUser.email);
+  var unreadReviews = reviews.filter(function(r){ return !r.bizRead; }).length;
+  var notifs = getBizNotifs(curUser.email);
+  var unreadNotifs = notifs.filter(function(n){ return !n.read; }).length;
+  var unread = unreadReviews + unreadNotifs;
+  var badge = document.getElementById('notifBadge');
+  if(badge) { badge.textContent = unread; badge.style.display = unread ? 'inline' : 'none'; }
+}
+
+function markNotifsRead() {
+  if(!curUser) return;
+  var reviews = getBizReviews(curUser.email);
+  var changed = false;
+  reviews.forEach(function(r){ if(!r.bizRead){ r.bizRead = true; changed = true; } });
+  if(changed) saveBizReviews(curUser.email, reviews);
+  var notifs = getBizNotifs(curUser.email);
+  var nChanged = false;
+  notifs.forEach(function(n){ if(!n.read){ n.read = true; nChanged = true; } });
+  if(nChanged) saveBizNotifs(curUser.email, notifs);
+  updateNotifBadge();
+}
+
+function renderNotifications() {
+  var el = document.getElementById('notifList'); if(!el) return;
+  if(!curUser) return;
+  var reviews = getBizReviews(curUser.email);
+  var notifs = getBizNotifs(curUser.email);
+  if(!reviews.length && !notifs.length) {
+    el.innerHTML = '<div class="empty"><div class="ei">🔔</div><p>No notifications yet.<br>They will appear here when admins take action on your events or customers leave reviews.</p></div>';
+    return;
+  }
+  var adminHTML = notifs.map(function(n) {
+    var isUnread = !n.read;
+    var dt = n.deletedAt ? new Date(n.deletedAt).toLocaleDateString('en-NZ',{day:'numeric',month:'short',year:'numeric'}) : '';
+    return '<div style="background:var(--dk);border:1px solid '+(isUnread?'rgba(231,76,60,.35)':'var(--br)')+';border-radius:14px;padding:18px 20px;margin-bottom:10px;'+(isUnread?'border-left:3px solid #e74c3c;':'')+'">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
+        (isUnread?'<span style="font-size:10px;font-weight:800;color:#e74c3c;text-transform:uppercase;letter-spacing:.5px;">● New</span>':'') +
+        '<span style="font-size:11px;font-weight:800;color:#e74c3c;text-transform:uppercase;letter-spacing:.5px;">🗑️ Event Removed by Admin</span>' +
+        '<span style="margin-left:auto;font-size:11px;color:var(--mt);">'+dt+'</span>' +
+      '</div>' +
+      '<div style="font-weight:800;font-size:15px;color:var(--wh);margin-bottom:8px;">'+n.title+(n.date?' · <span style="font-size:12px;font-weight:600;color:var(--mt);">'+n.date+'</span>':'')+'</div>' +
+      '<div style="background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.2);border-radius:8px;padding:10px 14px;margin-bottom:10px;">' +
+        '<div style="font-size:10px;font-weight:800;color:#e74c3c;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Reason</div>' +
+        '<div style="font-size:13px;color:var(--tx);">'+n.reason+'</div>' +
+        (n.note?'<div style="font-size:12px;color:var(--mt);margin-top:4px;">'+n.note+'</div>':'') +
+      '</div>' +
+      '<div style="font-size:12px;color:var(--mt);">You can resubmit this event with updated details from the My Events tab.</div>' +
+    '</div>';
+  }).join('');
+
+  var reviewsHTML = reviews.length ? reviews.map(function(r) {
+    var stars = '⭐'.repeat(r.stars);
+    var isUnread = !r.bizRead;
+    var bizLiked = r.bizLiked;
+    return '<div style="background:var(--dk);border:1px solid '+(isUnread?'rgba(245,194,0,.25)':'var(--br)')+';border-radius:14px;padding:18px 20px;margin-bottom:10px;'+(isUnread?'border-left:3px solid var(--y);':'')+'">' +
+      (isUnread ? '<div style="font-size:10px;font-weight:800;color:var(--y);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">● New Review</div>' : '') +
+      '<div style="font-size:18px;margin-bottom:6px;">'+stars+'</div>' +
+      '<div style="font-size:14px;color:var(--tx);line-height:1.6;margin-bottom:8px;">'+r.text+'</div>' +
+      '<div style="font-size:11px;color:var(--mt);margin-bottom:12px;">By <strong style="color:var(--tx);">'+r.userName+'</strong> · '+new Date(r.postedAt).toLocaleDateString('en-NZ')+'</div>' +
+      (r.bizReply ? '<div style="background:rgba(245,194,0,.06);border-left:3px solid var(--y);padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:10px;"><div style="font-size:10px;font-weight:800;color:var(--y);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Your Reply</div><div style="font-size:13px;color:var(--tx);">'+r.bizReply+'</div></div>' : '') +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+        '<button onclick="bizLikeReview('+r.id+')" style="background:'+(bizLiked?'rgba(245,194,0,.15)':'rgba(255,255,255,.05)')+';border:1px solid '+(bizLiked?'rgba(245,194,0,.3)':'var(--br)')+';color:'+(bizLiked?'var(--y)':'var(--mt)')+';padding:6px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;">'+(bizLiked?'❤️ Liked':'🤍 Like')+'</button>' +
+        '<button onclick="openBizReply('+r.id+')" style="background:rgba(255,255,255,.05);border:1px solid var(--br);color:var(--mt);padding:6px 14px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;">'+(r.bizReply?'✏️ Edit Reply':'💬 Reply')+'</button>' +
+      '</div>' +
+    '</div>';
+  }).join('') : '';
+  el.innerHTML = adminHTML + reviewsHTML;
+}
+
+function bizLikeReview(reviewId) {
+  if(!curUser) return;
+  var reviews = getBizReviews(curUser.email);
+  var r = reviews.find(function(x){ return x.id===reviewId; });
+  if(!r) return;
+  r.bizLiked = !r.bizLiked;
+  saveBizReviews(curUser.email, reviews);
+  renderNotifications();
+}
+
+function openBizReply(reviewId) {
+  document.getElementById('bizReplyRevId').value = reviewId;
+  var reviews = getBizReviews(curUser.email);
+  var r = reviews.find(function(x){ return x.id===reviewId; });
+  document.getElementById('bizReplyText').value = r && r.bizReply ? r.bizReply : '';
+  document.getElementById('bizReplyModal').style.display = 'flex';
+}
+
+function closeBizReply() {
+  document.getElementById('bizReplyModal').style.display = 'none';
+}
+
+function saveBizReply() {
+  var id = parseInt(document.getElementById('bizReplyRevId').value);
+  var text = document.getElementById('bizReplyText').value.trim();
+  if(!text) { showToast('Please write a reply'); return; }
+  var reviews = getBizReviews(curUser.email);
+  var r = reviews.find(function(x){ return x.id===id; });
+  if(!r) return;
+  r.bizReply = text;
+  r.bizRepliedAt = new Date().toISOString();
+  saveBizReviews(curUser.email, reviews);
+  closeBizReply();
+  renderNotifications();
+  showToast('✅ Reply saved — visible to customers');
+}
+
+// ── ANALYTICS ──
+function renderAnalytics() {
+  var subs = getMySubs();
+  var approved = subs.filter(function(s){return s.status==='approved';});
+  var totalViews = subs.reduce(function(a,s){return a+fakeViews(s.id);},0);
+  var totalClicks = subs.reduce(function(a,s){return a+fakeClicks(s.id);},0);
+  var ctr = totalViews > 0 ? Math.round(totalClicks/totalViews*100) : 0;
+
+  var el = document.getElementById('anStats');
+  if(el) el.innerHTML =
+    stat('yel','👁️', totalViews, 'Total Views', 'All time') +
+    stat('grn','🖱️', totalClicks, 'Total Clicks', ctr+'% click rate') +
+    stat('blu','📅', approved.length, 'Live Events', 'Currently active') +
+    stat('pu','📊', subs.length ? Math.round(totalViews/subs.length) : 0, 'Avg Views/Event', 'Per listing');
+
+  var chartsEl = document.getElementById('anCharts');
+  if(!chartsEl) return;
+
+  if(!subs.length) {
+    chartsEl.innerHTML = '<div class="an-card" style="grid-column:1/-1"><div class="empty"><div class="empty-ico">📈</div><p>Submit your first event to see analytics here</p></div></div>';
+    return;
+  }
+
+  // Views by event bar chart
+  var maxV = Math.max.apply(null, subs.map(function(s){return fakeViews(s.id);}))||1;
+  var barsHTML = subs.map(function(s){
+    var v = fakeViews(s.id);
+    var pct = Math.round(v/maxV*100);
+    return '<div class="bar-row"><div class="bar-lbl" title="'+s.title+'">'+s.title+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div><div class="bar-val">'+v+'</div></div>';
+  }).join('');
+
+  // Category breakdown
+  var catCount = {};
+  subs.forEach(function(s){ catCount[s.category] = (catCount[s.category]||0)+1; });
+  var catMax = Math.max.apply(null, Object.values(catCount))||1;
+  var catBars = Object.entries(catCount).map(function(e){
+    var pct = Math.round(e[1]/catMax*100);
+    return '<div class="bar-row"><div class="bar-lbl">'+e[0]+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var(--bl)"></div></div><div class="bar-val">'+e[1]+'</div></div>';
+  }).join('');
+
+  chartsEl.innerHTML =
+    '<div class="an-card"><h3>Views by Event</h3>'+barsHTML+'</div>' +
+    '<div class="an-card"><h3>Events by Category</h3>'+catBars+'</div>';
+}
+
+// ── PACKAGE SELECTOR ──
+var evImgData = null;
+
+function handleEvImg(event) {
+  var file = event.target.files[0];
+  if(!file) return;
+  if(file.size > 5 * 1024 * 1024) { showToast('Image too large — max 5MB'); return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    evImgData = e.target.result;
+    document.getElementById('evImgThumb').src = evImgData;
+    document.getElementById('evImgPreview').style.display = 'block';
+    document.getElementById('imgDrop').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearEvImg() {
+  evImgData = null;
+  document.getElementById('evImg').value = '';
+  document.getElementById('evImgPreview').style.display = 'none';
+  document.getElementById('imgDrop').style.display = 'block';
+}
+
+// Drag and drop support
+document.addEventListener('DOMContentLoaded', function() {
+  var drop = document.getElementById('imgDrop');
+  if(!drop) return;
+  drop.addEventListener('dragover', function(e) { e.preventDefault(); drop.style.borderColor = 'var(--y)'; });
+  drop.addEventListener('dragleave', function() { drop.style.borderColor = ''; });
+  drop.addEventListener('drop', function(e) {
+    e.preventDefault();
+    drop.style.borderColor = '';
+    var file = e.dataTransfer.files[0];
+    if(file && file.type.startsWith('image/')) {
+      var input = document.getElementById('evImg');
+      var dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      handleEvImg({target: input});
+    }
+  });
+});
+
+function selPkg(el, pkg) {
+  document.querySelectorAll('.pkg-opt').forEach(function(o){o.classList.remove('on');});
+  el.classList.add('on');
+  selectedPkg = pkg;
+  document.getElementById('selPkgVal').value = pkg;
+}
+
+// ── SUBMIT EVENT ──
+var editingEventId = null;
+
+function editEvent(id) {
+  var all = [];
+  try { all = JSON.parse(localStorage.getItem('hub_ads') || '[]'); } catch(e) {}
+  var s = all.find(function(x){ return x.id === id; });
+  if(!s) return;
+
+  editingEventId = id;
+
+  // Pre-fill the form
+  document.getElementById('evTitle').value = s.title || '';
+  document.getElementById('evCat').value = s.category || '';
+  document.getElementById('evLoc').value = s.location || '';
+  document.getElementById('evDate').value = s.date || '';
+  // Parse stored time string back into start/end time inputs
+  var _ts = s.time || '';
+  var _tparts = _ts.split(' – ');
+  function _parseTime(t) {
+    if(!t) return '';
+    var m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if(!m) return '';
+    var h = parseInt(m[1]), mn = m[2], ap = m[3].toUpperCase();
+    if(ap==='PM' && h!==12) h+=12;
+    if(ap==='AM' && h===12) h=0;
+    return (h<10?'0':'')+h+':'+mn;
+  }
+  document.getElementById('evTimeStart').value = _parseTime(_tparts[0]);
+  document.getElementById('evTimeEnd').value   = _tparts[1] ? _parseTime(_tparts[1]) : '';
+  document.getElementById('evPrice').value = s.price === 'Free' ? '' : (s.price || '');
+  document.getElementById('evUrl').value = s.url || '';
+  document.getElementById('evDesc').value = s.desc || '';
+
+  // Set package
+  selectedPkg = s.pkg || 'Starter';
+  document.querySelectorAll('.pkg-opt').forEach(function(el){ el.classList.remove('on'); });
+  var pkgEl = document.getElementById('pkg-' + selectedPkg);
+  if(pkgEl) pkgEl.classList.add('on');
+
+  // Show existing image if any
+  if(s.img) {
+    evImgData = s.img;
+    document.getElementById('evImgThumb').src = s.img;
+    document.getElementById('evImgPreview').style.display = 'block';
+    document.getElementById('imgDrop').style.display = 'none';
+  } else {
+    clearEvImg();
+  }
+
+  // Show edit banner, update title
+  document.getElementById('editBanner').style.display = 'flex';
+  document.getElementById('submitPanelTitle').textContent = 'Edit Event';
+  document.getElementById('submitPanelSub').textContent = 'Update your event details. It will go back for review once submitted.';
+
+  // Switch to submit panel
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
+  document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('on'); });
+  document.getElementById('pn-submit').classList.add('on');
+  var btn = document.querySelector('.ni[onclick*="submit"]');
+  if(btn) btn.classList.add('on');
+  window.scrollTo(0,0);
+}
+
+function cancelEdit() {
+  editingEventId = null;
+  clearEditMode();
+  swPanel('events', document.querySelector('.ni[onclick*="events"]'));
+}
+
+function clearEditMode() {
+  editingEventId = null;
+  document.getElementById('editBanner').style.display = 'none';
+  document.getElementById('submitPanelTitle').textContent = 'Submit an Event';
+  document.getElementById('submitPanelSub').textContent = 'Fill in the details below and choose a package. Your event goes live once approved.';
+  ['evTitle','evLoc','evDate','evTimeStart','evTimeEnd','evPrice','evUrl','evDesc'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  clearEvImg();
+  selectedPkg = 'Starter';
+  document.querySelectorAll('.pkg-opt').forEach(function(el){ el.classList.remove('on'); });
+  var starter = document.getElementById('pkg-Starter');
+  if(starter) starter.classList.add('on');
+}
+
+function removeEvent(id) {
+  if(!confirm('Remove this event? If it\'s live on Hub it will be taken down.')) return;
+  var all = [];
+  try { all = JSON.parse(localStorage.getItem('hub_ads') || '[]'); } catch(e) {}
+  all = all.filter(function(x){ return x.id !== id; });
+  try { localStorage.setItem('hub_ads', JSON.stringify(all)); } catch(e) {}
+
+  // Also remove from hub_live if it was approved
+  var live = [];
+  try { live = JSON.parse(localStorage.getItem('hub_live') || '[]'); } catch(e) {}
+  live = live.filter(function(x){ return x.id !== id && String(x.id) !== String(id); });
+  try { localStorage.setItem('hub_live', JSON.stringify(live)); } catch(e) {}
+
+  showToast('Event removed');
+  renderAll();
+}
+
+function resubEvent(id) {
+  var all = [];
+  try { all = JSON.parse(localStorage.getItem('hub_ads') || '[]'); } catch(e) {}
+  var idx = all.findIndex(function(x){ return x.id === id; });
+  if(idx === -1) return;
+  all[idx].status = 'pending';
+  all[idx].submittedAt = new Date().toISOString();
+  try { localStorage.setItem('hub_ads', JSON.stringify(all)); } catch(e) {}
+  showToast('✅ Resubmitted for review!');
+  renderAll();
+}
+
+// Open new-date modal for a PAST submission (still in hub_ads)
+function resubEventNewDate(id) {
+  var all = [];
+  try { all = JSON.parse(localStorage.getItem('hub_ads') || '[]'); } catch(e) {}
+  var ev = all.find(function(x){ return x.id === id; });
+  if(!ev) return;
+  openNewDateModal(ev.title, ev.category, ev.location, ev.price, ev.pkg, id, null);
+}
+
+// Open new-date modal for an ADMIN-DELETED event (from hub_archive cache)
+function resubDeletedEvent(idx) {
+  var cache = window._bizDeletedCache || [];
+  var data = cache[idx] || {};
+  openNewDateModal(data.title||'', data.cat||'', data.venue||'', data.price||'', data.pkg||'', null, data);
+}
+
+function openNewDateModal(title, cat, location, price, pkg, existingId, extraData) {
+  document.getElementById('ndTitle').textContent = title;
+  document.getElementById('ndExistingId').value = existingId || '';
+  document.getElementById('ndExtraData').value = existingId ? '' : JSON.stringify(extraData || {});
+  document.getElementById('ndDate').value = '';
+  document.getElementById('ndTime').value = '';
+  document.getElementById('newDateModal').classList.add('open');
+}
+
+function confirmNewDate() {
+  var date = document.getElementById('ndDate').value;
+  var time = document.getElementById('ndTime').value;
+  if(!date) { showToast('Please pick a new date'); return; }
+  var existingId = document.getElementById('ndExistingId').value;
+
+  if(existingId) {
+    // Update existing submission
+    var all = [];
+    try { all = JSON.parse(localStorage.getItem('hub_ads') || '[]'); } catch(e) {}
+    var idx = all.findIndex(function(x){ return String(x.id) === String(existingId); });
+    if(idx !== -1) {
+      all[idx].date = date;
+      if(time) all[idx].time = time;
+      all[idx].status = 'pending';
+      all[idx].submittedAt = new Date().toISOString();
+      try { localStorage.setItem('hub_ads', JSON.stringify(all)); } catch(e) {}
+    }
+  } else {
+    // Resubmit admin-deleted event as brand new submission
+    var extra = {};
+    try { extra = JSON.parse(document.getElementById('ndExtraData').value||'{}'); } catch(e) {}
+    var newSub = {
+      id: Date.now(),
+      title: extra.title || document.getElementById('ndTitle').textContent,
+      category: extra.cat || '',
+      location: extra.venue || '',
+      price: extra.price || 'Free',
+      pkg: extra.pkg || 'Starter',
+      date: date,
+      time: time || '',
+      biz: curUser ? curUser.bizName : '',
+      bizEmail: curUser ? curUser.email : '',
+      email: curUser ? curUser.email : '',
+      status: 'pending',
+      submittedAt: new Date().toISOString()
+    };
+    var all2 = [];
+    try { all2 = JSON.parse(localStorage.getItem('hub_ads') || '[]'); } catch(e) {}
+    all2.push(newSub);
+    try { localStorage.setItem('hub_ads', JSON.stringify(all2)); } catch(e) {}
+  }
+
+  document.getElementById('newDateModal').classList.remove('open');
+  showToast('✅ Resubmitted with new date — pending review!');
+  renderAll();
+}
+
+// ── REPEAT EVENT ──────────────────────────────────────────────
+var repeatMode = 'none';
+var customDates = [];
+
+function setRepeat(mode, btn) {
+  repeatMode = mode;
+  document.querySelectorAll('.repeat-opt').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  document.getElementById('repeatUntilRow').style.display = (mode === 'weekly' || mode === 'fortnightly' || mode === 'monthly') ? 'block' : 'none';
+  document.getElementById('repeatCustomRow').style.display = mode === 'custom' ? 'block' : 'none';
+  updateRepeatPreview();
+}
+
+function addCustomDate() {
+  var val = document.getElementById('evCustomDateInput').value;
+  if(!val) { showToast('Please pick a date first'); return; }
+  if(customDates.length >= 20) { showToast('Maximum 20 dates reached'); return; }
+  if(customDates.indexOf(val) !== -1) { showToast('That date is already added'); return; }
+  customDates.push(val);
+  customDates.sort();
+  document.getElementById('evCustomDateInput').value = '';
+  renderCustomDates();
+  updateRepeatPreview();
+}
+
+function removeCustomDate(d) {
+  customDates = customDates.filter(function(x){ return x !== d; });
+  renderCustomDates();
+  updateRepeatPreview();
+}
+
+function renderCustomDates() {
+  var el = document.getElementById('customDateList');
+  var countEl = document.getElementById('customDateCount');
+  if(!el) return;
+  if(customDates.length === 0) {
+    el.innerHTML = '<p style="font-size:12px;color:var(--mt);margin:0;">No dates added yet — pick a date above and click + Add Date.</p>';
+    if(countEl) countEl.style.display = 'none';
+    return;
+  }
+  if(countEl) {
+    countEl.style.display = 'block';
+    countEl.textContent = customDates.length + '/20 dates selected' + (customDates.length >= 20 ? ' (maximum reached)' : '');
+    countEl.style.color = customDates.length >= 20 ? 'var(--y)' : 'var(--mt)';
+  }
+  el.innerHTML = customDates.map(function(d, i){
+    var label = new Date(d + 'T00:00:00').toLocaleDateString('en-NZ', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+    return '<div class="custom-date-tag" style="animation:fadeIn .15s ease ' + (i*0.03) + 's both;">' +
+      '<span style="font-size:10px;opacity:.6;margin-right:2px;">' + (i+1) + '.</span>' +
+      label +
+      '<button onclick="removeCustomDate(\''+d+'\')">✕</button>' +
+      '</div>';
+  }).join('');
+}
+
+function getRepeatDates(startDate) {
+  if(!startDate) return [];
+  if(repeatMode === 'none') return [startDate];
+  if(repeatMode === 'custom') {
+    if(customDates.length === 0) return [startDate];
+    return customDates.slice();
+  }
+  var until = document.getElementById('evRepeatUntil').value;
+  if(!until) return [startDate];
+  var dates = [];
+  var cur = new Date(startDate + 'T00:00:00');
+  var end = new Date(until + 'T00:00:00');
+  while(cur <= end) {
+    dates.push(cur.toISOString().slice(0,10));
+    if(repeatMode === 'weekly') cur.setDate(cur.getDate() + 7);
+    else if(repeatMode === 'fortnightly') cur.setDate(cur.getDate() + 14);
+    else if(repeatMode === 'monthly') cur.setMonth(cur.getMonth() + 1);
+    else break;
+  }
+  return dates;
+}
+
+function updateRepeatPreview() {
+  var el = document.getElementById('repeatPreview');
+  var startDate = document.getElementById('evDate').value;
+  var dates = getRepeatDates(startDate);
+  if(!el) return;
+  if(dates.length <= 1) { el.textContent = ''; return; }
+  el.textContent = '📅 Will create ' + dates.length + ' events: ' +
+    dates.slice(0,3).map(function(d){ return new Date(d+'T00:00:00').toLocaleDateString('en-NZ',{day:'numeric',month:'short'}); }).join(', ') +
+    (dates.length > 3 ? ' … +' + (dates.length - 3) + ' more' : '');
+}
+
+function formatTime(start, end) {
+  if(!start) return '';
+  // Convert 24h "HH:MM" to "h:MM AM/PM"
+  function fmt(t) {
+    var parts = t.split(':');
+    var h = parseInt(parts[0]), m = parts[1];
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + m + ' ' + ampm;
+  }
+  return end ? fmt(start) + ' – ' + fmt(end) : fmt(start);
+}
+
+// Update repeat preview when date changes
+document.addEventListener('DOMContentLoaded', function(){
+  var evDateEl = document.getElementById('evDate');
+  if(evDateEl) evDateEl.addEventListener('change', updateRepeatPreview);
+  var evRepeatUntilEl = document.getElementById('evRepeatUntil');
+  if(evRepeatUntilEl) evRepeatUntilEl.addEventListener('change', updateRepeatPreview);
+});
+
+function submitEvent() {
+  if(curUser && curUser.status === 'banned') { showToast('Your account has been banned from posting events.'); return; }
+  if(curUser && curUser.status === 'suspended') { showToast('Your account is currently suspended.'); return; }
+  var title = document.getElementById('evTitle').value.trim();
+  var cat = document.getElementById('evCat').value;
+  var loc = document.getElementById('evLoc').value.trim();
+  var date = document.getElementById('evDate').value;
+  var timeStart = document.getElementById('evTimeStart').value;
+  if(!title||!cat||!loc||!date) { showToast('Please fill in required fields'); return; }
+  if(repeatMode === 'custom' && customDates.length === 0) { showToast('Please add at least one custom date'); return; }
+  if(repeatMode === 'custom' && customDates.length > 20) { showToast('Maximum 20 custom dates allowed'); return; }
+  if(!timeStart) { showToast('Please enter a start time'); return; }
+
+  if(editingEventId) {
+    doUpdate(title, cat, loc, date);
+    return;
+  }
+
+  var dates = getRepeatDates(date);
+
+  if(selectedPkg === 'Featured' || selectedPkg === 'Premium') {
+    pendingSubmission = { title:title, cat:cat, loc:loc, date:date, dates:dates,
+      timeStart: timeStart, timeEnd: document.getElementById('evTimeEnd').value,
+      price: document.getElementById('evPrice').value || 'Free',
+      url: document.getElementById('evUrl').value,
+      desc: document.getElementById('evDesc').value };
+    openPayModal(selectedPkg);
+    return;
+  }
+  doSubmit(title, cat, loc, date, dates);
+}
+
+var pendingSubmission = null;
+
+function getBizPricing() {
+  var defaults = { featured: '$19', featuredLabel: 'per listing', premium: '$49', premiumLabel: 'per listing' };
+  try { return JSON.parse(localStorage.getItem('hub_pricing')||'null') || defaults; } catch(e) { return defaults; }
+}
+
+function applyBizPricing() {
+  var p = getBizPricing();
+  var fe = document.getElementById('bizPkgPriceFeatured');
+  var pe = document.getElementById('bizPkgPricePremium');
+  if(fe) fe.textContent = p.featured;
+  if(pe) pe.textContent = p.premium;
+}
+
+function openPayModal(pkg) {
+  var p = getBizPricing();
+  var amounts = {Featured: p.featured, Premium: p.premium};
+  document.getElementById('payModalTitle').textContent = pkg + ' Package — Payment';
+  document.getElementById('payModalAmount').textContent = amounts[pkg] || '';
+  document.getElementById('payRef').textContent = (curUser && curUser.name) ? curUser.name : 'Your business name';
+  document.getElementById('payModal').style.display = 'flex';
+}
+
+function closePayModal() {
+  document.getElementById('payModal').style.display = 'none';
+}
+
+function copyBank() {
+  navigator.clipboard.writeText('02-1245-0475535-031').then(function(){
+    showToast('Account number copied!');
+  });
+}
+
+function confirmPayAndSubmit() {
+  if(!pendingSubmission) return;
+  var p = pendingSubmission;
+  doSubmit(p.title, p.cat, p.loc, p.date, p.dates, p.timeStart, p.timeEnd, p.price, p.url, p.desc);
+  closePayModal();
+  pendingSubmission = null;
+}
+
+function doSubmit(title, cat, loc, date, dates, timeStart, timeEnd, price, url, desc) {
+  dates = dates || [date];
+  timeStart = timeStart || document.getElementById('evTimeStart').value;
+  timeEnd   = timeEnd   !== undefined ? timeEnd : document.getElementById('evTimeEnd').value;
+  price = price || document.getElementById('evPrice').value || 'Free';
+  url   = url   || document.getElementById('evUrl').value;
+  desc  = desc  || document.getElementById('evDesc').value;
+  var timeStr = formatTime(timeStart, timeEnd);
+
+  var subs = [];
+  try { subs = JSON.parse(localStorage.getItem('hub_ads')||'[]'); } catch(e) {}
+
+  var baseId = Date.now();
+  dates.forEach(function(d, i) {
+    var sub = {
+      id: baseId + i,
+      biz: curUser.name,
+      bizEmail: curUser.email,
+      email: curUser.email,
+      title: title + (dates.length > 1 ? '' : ''),
+      category: cat,
+      location: loc,
+      date: d,
+      time: timeStr,
+      price: price,
+      url: url,
+      desc: desc,
+      pkg: selectedPkg,
+      status: 'pending',
+      emoji: '📌',
+      img: evImgData || '',
+      submittedAt: new Date().toISOString(),
+      repeatGroup: dates.length > 1 ? String(baseId) : undefined
+    };
+    subs.unshift(sub);
+  });
+
+  try { localStorage.setItem('hub_ads', JSON.stringify(subs)); } catch(e) {}
+
+  // Email Hub team about new submission
+  var firstSub = subs[0];
+  hubSendEmail("YOUR_SERVICE_ID","hub_biz_submission",{
+    biz_name: curUser ? (curUser.name||curUser.email) : "Unknown",
+    biz_email: curUser ? curUser.email : "Unknown",
+    event_title: title,
+    category: cat,
+    location: loc,
+    date: dates.join(", "),
+    time: timeStart+(timeEnd?" - "+timeEnd:""),
+    price: price||"Free",
+    package: selectedPkg||"Starter",
+    description: desc||"No description",
+    to_email: "thehawkesbayhub@gmail.com"
+  }).catch(function(err){ console.error("EmailJS biz submission error:", err); });
+
+  // Reset form
+  evImgData = null; clearEvImg();
+  ['evTitle','evLoc','evDate','evTimeStart','evTimeEnd','evPrice','evUrl','evDesc'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('evCat').value = '';
+  selPkg(document.getElementById('pkg-Starter'), 'Starter');
+  // Reset repeat
+  repeatMode = 'none'; customDates = [];
+  document.querySelectorAll('.repeat-opt').forEach(function(b){ b.classList.remove('on'); });
+  document.querySelector('.repeat-opt').classList.add('on');
+  document.getElementById('repeatUntilRow').style.display = 'none';
+  document.getElementById('repeatCustomRow').style.display = 'none';
+  document.getElementById('repeatPreview').textContent = '';
+  renderCustomDates();
+
+  var msg = dates.length > 1
+    ? '🎉 Submitted ' + dates.length + ' events for review!'
+    : '🎉 Submitted! We will review it soon.';
+  showToast(msg);
+  setTimeout(function(){ swPanel('events', document.querySelectorAll('.ni')[1]); }, 1200);
+}
+
+function doUpdate(title, cat, loc, date) {
+  var time = formatTime(document.getElementById('evTimeStart').value, document.getElementById('evTimeEnd').value);
+  var price = document.getElementById('evPrice').value || 'Free';
+  var url = document.getElementById('evUrl').value;
+  var desc = document.getElementById('evDesc').value;
+
+  var all = [];
+  try { all = JSON.parse(localStorage.getItem('hub_ads') || '[]'); } catch(e) {}
+  var idx = all.findIndex(function(x){ return x.id === editingEventId; });
+  if(idx === -1) { showToast('Event not found'); return; }
+
+  var wasApproved = all[idx].status === 'approved';
+
+  // Update the submission
+  all[idx] = Object.assign(all[idx], {
+    title: title,
+    category: cat,
+    location: loc,
+    date: date,
+    time: time,
+    price: price,
+    url: url,
+    desc: desc,
+    pkg: selectedPkg,
+    img: evImgData || all[idx].img || '',
+    status: 'pending',
+    submittedAt: new Date().toISOString()
+  });
+
+  try { localStorage.setItem('hub_ads', JSON.stringify(all)); } catch(e) {}
+
+  // If it was approved/live, remove from hub_live so it goes back for review
+  if(wasApproved) {
+    var live = [];
+    try { live = JSON.parse(localStorage.getItem('hub_live') || '[]'); } catch(e) {}
+    live = live.filter(function(x){ return String(x.id) !== String(editingEventId); });
+    try { localStorage.setItem('hub_live', JSON.stringify(live)); } catch(e) {}
+  }
+
+  clearEditMode();
+  showToast(wasApproved ? '✅ Updated — sent for re-review' : '✅ Event updated!');
+  renderAll();
+
+  // Switch back to My Events
+  setTimeout(function(){
+    swPanel('events', document.querySelectorAll('.ni')[1]);
+  }, 1200);
+}
+
+
+// ── SAVE PROFILE ──
+function saveBizUserChanges() {
+  var users = [];
+  try { users = JSON.parse(localStorage.getItem('hu_users')||'[]'); } catch(e) {}
+  var idx = users.findIndex(function(u){ return u.email === curUser.email; });
+  if(idx >= 0) users[idx] = curUser; else users.push(curUser);
+  localStorage.setItem('hu_users', JSON.stringify(users));
+  localStorage.setItem('hu', JSON.stringify(curUser));
+}
+
+function handleBizProfImg(event) {
+  var file = event.target.files[0]; if(!file) return;
+  if(file.size > 3*1024*1024) { showToast('Image too large — max 3MB'); return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    curUser.avatar = e.target.result;
+    saveBizUserChanges();
+    var av = document.getElementById('profAv');
+    av.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"><div id="profAvOverlay" style="position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:18px;">📷</div><input type="file" id="bizProfImgIn" accept="image/*" style="display:none" onchange="handleBizProfImg(event)">';
+    updateSidebarAvatar();
+    showToast('✅ Photo updated!');
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateSidebarAvatar() {
+  var ini = (curUser.name||curUser.email||'B')[0].toUpperCase();
+  var sbAv = document.getElementById('sbAv');
+  if(curUser.avatar && sbAv) {
+    sbAv.innerHTML = '<img src="'+curUser.avatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+  } else if(sbAv) {
+    sbAv.textContent = ini;
+  }
+}
+
+function saveProfileInfo() {
+  var name = document.getElementById('pName').value.trim();
+  var phone = document.getElementById('pPhone').value.trim();
+  if(!name) { showToast('Name cannot be empty'); return; }
+  curUser.name = name;
+  curUser.phone = phone;
+  saveBizUserChanges();
+  document.getElementById('sbName').textContent = name;
+  var letter = document.getElementById('profAvLetter');
+  if(letter) letter.textContent = name[0].toUpperCase();
+  document.getElementById('sbName').textContent = name;
+  showToast('✅ Profile saved!');
+}
+
+function saveProfileEmail() {
+  var newEmail = document.getElementById('pNewEmail').value.trim().toLowerCase();
+  var pass = document.getElementById('pEmailPass').value;
+  if(!newEmail) { showToast('Enter a new email'); return; }
+  if(pass !== curUser.pass) { showToast('Incorrect password'); return; }
+  var users = [];
+  try { users = JSON.parse(localStorage.getItem('hu_users')||'[]'); } catch(e) {}
+  if(users.find(function(u){ return u.email===newEmail && u.email!==curUser.email; })) {
+    showToast('Email already in use'); return;
+  }
+  curUser.email = newEmail;
+  saveBizUserChanges();
+  document.getElementById('pEmail').value = newEmail;
+  showToast('✅ Email updated!');
+}
+
+function saveProfilePass() {
+  var cur = document.getElementById('pCurPass').value;
+  var nw = document.getElementById('pNewPass').value;
+  var conf = document.getElementById('pConfPass').value;
+  if(cur !== curUser.pass) { showToast('Current password incorrect'); return; }
+  var _ppErr=checkPass(nw); if(_ppErr){showToast(_ppErr);return;}
+  if(nw !== conf) { showToast('Passwords do not match'); return; }
+  curUser.pass = nw;
+  saveBizUserChanges();
+  document.getElementById('pCurPass').value = '';
+  document.getElementById('pNewPass').value = '';
+  document.getElementById('pConfPass').value = '';
+  showToast('✅ Password changed!');
+}
+
+function saveProfile() { saveProfileInfo(); }
+
+function deleteBizAccount() {
+  if(!confirm('Delete your business account permanently? All your events will be removed.')) return;
+  if(!confirm('Are you absolutely sure? This cannot be undone.')) return;
+  var users = [];
+  try { users = JSON.parse(localStorage.getItem('hu_users')||'[]'); } catch(e) {}
+  users = users.filter(function(u){ return u.email !== curUser.email; });
+  localStorage.setItem('hu_users', JSON.stringify(users));
+  // Remove their submissions
+  var subs = [];
+  try { subs = JSON.parse(localStorage.getItem('hub_ads')||'[]'); } catch(e) {}
+  subs = subs.filter(function(s){ return s.bizEmail !== curUser.email; });
+  localStorage.setItem('hub_ads', JSON.stringify(subs));
+  // Remove from live
+  var live = [];
+  try { live = JSON.parse(localStorage.getItem('hub_live')||'[]'); } catch(e) {}
+  live = live.filter(function(e){ return e.bizEmail !== curUser.email; });
+  localStorage.setItem('hub_live', JSON.stringify(live));
+  localStorage.removeItem('hu');
+  goIndex();
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(function(){t.classList.remove('show');}, 3000);
+}
+
+// ── BACKUP & RESTORE ──
+function _hubBackupExport(filenamePrefix) {
+  try {
+    var backup = { version: 2, exportedAt: new Date().toISOString(), data: {} };
+    var staticKeys = ['ha','hu_users','hub_ads','hub_live','hub_deleted','hub_archive','hub_reports','hub_merch','hub_pricing'];
+    staticKeys.forEach(function(k) {
+      var v = localStorage.getItem(k);
+      if(v !== null) backup.data[k] = v;
+    });
+    for(var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+      if(key && (key.indexOf('hub_reviews_')===0 || key.indexOf('hub_notifs_')===0 || key.indexOf('hub_saved_')===0)) {
+        backup.data[key] = localStorage.getItem(key);
+      }
+    }
+    var count = Object.keys(backup.data).length;
+    var blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = (filenamePrefix||'hub') + '-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📦 Backup downloaded! (' + count + ' stores saved)');
+  } catch(e) { showToast('❌ Backup failed: ' + e.message); }
+}
+
+function _hubBackupRestore(event, statusId, onDone) {
+  var file = event.target.files && event.target.files[0];
+  if(!file) return;
+  event.target.value = '';
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var backup = JSON.parse(e.target.result);
+      var data = (backup.version === 2 && backup.data) ? backup.data : backup;
+      if(!data || typeof data !== 'object') throw new Error('Invalid backup file');
+      var dateStr = backup.exportedAt ? new Date(backup.exportedAt).toLocaleString('en-NZ') : 'unknown date';
+      if(!confirm('Restore backup from ' + dateStr + '?\nThis will overwrite ALL current data. Continue?')) return;
+      var count = 0;
+      Object.keys(data).forEach(function(k) {
+        if(k === 'hu' || k === 'hub_admin_view') return;
+        try { localStorage.setItem(k, data[k]); count++; } catch(err) {}
+      });
+      var statusEl = statusId ? document.getElementById(statusId) : null;
+      if(statusEl) {
+        statusEl.style.display = 'block';
+        statusEl.textContent = '✅ Restored ' + count + ' stores from backup (' + dateStr + ')';
+        setTimeout(function(){ statusEl.style.display='none'; }, 8000);
+      }
+      showToast('✅ Restored ' + count + ' stores!');
+      if(onDone) onDone();
+    } catch(err) { showToast('❌ Restore failed: ' + err.message); }
+  };
+  reader.onerror = function(){ showToast('❌ Could not read file'); };
+  reader.readAsText(file);
+}
+
+function idxFullBackupExport() { _hubBackupExport('hub'); }
+function idxFullBackupRestore(event) { _hubBackupRestore(event, 'idxBackupStatus', function(){ location.reload(); }); }
+
+function bizFullBackupExport() { _hubBackupExport('hub'); }
+function bizFullBackupRestore(event) { _hubBackupRestore(event, 'bizBackupStatus', function(){ location.reload(); }); }
+
+</script>
+
+<!-- PAYMENT MODAL -->
+<div id="payModal" class="pay-modal-overlay" style="display:none;" onclick="if(event.target===this)closePayModal()">
+  <div class="pay-modal">
+    <button class="pay-modal-close" onclick="closePayModal()">✕</button>
+    <h3 id="payModalTitle">Complete Payment</h3>
+    <p class="pay-sub">Bank transfer to activate your listing package.</p>
+
+    <div class="pay-amount" id="payModalAmount">$19</div>
+    <p class="pay-ref-note">Use your business name as the payment reference.</p>
+
+    <div class="pay-step">
+      <div class="pay-step-num">1</div>
+      <div class="pay-step-body">
+        <div class="pay-step-label">Transfer to this account</div>
+        <div class="pay-bank-box">
+          <div class="pay-bank-row">
+            <span class="pay-bank-key">Account Name</span>
+            <span class="pay-bank-val">Chip Mackie</span>
+          </div>
+          <div class="pay-bank-row">
+            <span class="pay-bank-key">Account Number</span>
+            <span class="pay-bank-val" id="bankAccNum">02-1245-0475535-031</span>
+            <button class="pay-copy-btn" onclick="copyBank()">Copy</button>
+          </div>
+          <div class="pay-bank-row">
+            <span class="pay-bank-key">Reference</span>
+            <span class="pay-bank-val" id="payRef">Your business name</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pay-step">
+      <div class="pay-step-num">2</div>
+      <div class="pay-step-body">
+        <div class="pay-step-label">Submit your event</div>
+        <div class="pay-step-val">After paying, click confirm below. Your listing will be reviewed and activated once payment is verified (usually within 24 hours).</div>
+      </div>
+    </div>
+
+    <button class="pay-confirm-btn" onclick="confirmPayAndSubmit()">✅ I've Paid — Submit Event</button>
+  </div>
+</div>
+
+<!-- BIZ REPLY MODAL -->
+<div id="bizReplyModal" class="biz-reply-overlay" style="display:none;" onclick="if(event.target===this)closeBizReply()">
+  <div class="biz-reply-modal">
+    <h3>💬 Reply to Review</h3>
+    <p>Your reply will appear publicly below the review on your business profile.</p>
+    <input type="hidden" id="bizReplyRevId">
+    <textarea id="bizReplyText" placeholder="Write a thoughtful reply to this customer..."></textarea>
+    <div style="display:flex;gap:10px;margin-top:14px;">
+      <button onclick="saveBizReply()" style="flex:1;padding:12px;background:var(--y);color:#000;font-weight:800;font-size:14px;border:none;border-radius:12px;cursor:pointer;">Save Reply</button>
+      <button onclick="closeBizReply()" style="flex:1;padding:12px;background:var(--c1);border:1px solid var(--br);color:var(--tx);font-weight:800;font-size:14px;border-radius:12px;cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- NEW DATE MODAL -->
+<div class="modal-ov" id="newDateModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:420px;">
+    <h2 style="margin-bottom:4px;">📅 Resubmit with New Date</h2>
+    <p id="ndTitle" style="color:var(--y);font-weight:700;font-size:15px;margin-bottom:18px;"></p>
+    <input type="hidden" id="ndExistingId">
+    <input type="hidden" id="ndExtraData">
+    <div class="mfg" style="margin-bottom:14px;">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;">New Date *</label>
+      <input type="date" id="ndDate" style="width:100%;background:var(--dk);border:1.5px solid var(--br);border-radius:10px;padding:10px 14px;color:var(--tx);font-size:14px;box-sizing:border-box;">
+    </div>
+    <div class="mfg" style="margin-bottom:20px;">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--mt);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;">Time (optional)</label>
+      <input type="time" id="ndTime" style="width:100%;background:var(--dk);border:1.5px solid var(--br);border-radius:10px;padding:10px 14px;color:var(--tx);font-size:14px;box-sizing:border-box;">
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="confirmNewDate()" style="flex:1;padding:12px;background:var(--y);color:#000;font-weight:800;border:none;border-radius:10px;cursor:pointer;font-size:13px;">Submit for Review</button>
+      <button onclick="document.getElementById('newDateModal').classList.remove('open')" style="flex:1;padding:12px;background:var(--dk);color:var(--mt);font-weight:700;border:1px solid var(--br);border-radius:10px;cursor:pointer;font-size:13px;">Cancel</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
